@@ -3,42 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ATK SUPERMARKET - Cashflow & Ledger Tracker</title>
+  <title>ATK SUPERMARKET (Cashflow & Ledger Tracker)</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
-          colors: {
-            brand: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-            }
-          }
-        }
-      }
-    }
-  </script>
   <style>
     body { font-family: 'Inter', sans-serif; }
     .mono-num { font-family: 'JetBrains Mono', monospace; }
-    /* Custom scrollbar for data tables */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-track { background: #f8fafc; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
@@ -46,12 +22,11 @@
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
 
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center space-x-3.5">
-        <!-- ATK Logo Container (Supports Default Crafted SVG or Uploaded Custom ATK.jpg) -->
+        <!-- ATK Logo Container (Embedded vector + custom upload option) -->
         <div class="relative group cursor-pointer" onclick="document.getElementById('logoFileInput').click()" title="Click to upload custom logo file (e.g. ATK.jpg)">
-          <div id="brandLogoContainer" class="w-12 h-12 rounded-xl bg-[#172232] flex items-center justify-center p-1 shadow-md shadow-slate-900/20 border border-slate-700/60 overflow-hidden transition-transform group-hover:scale-105">
-            <!-- Default High-Fidelity Vector Reproduction of user's ATK Logo -->
+          <div id="brandLogoContainer" class="w-12 h-12 rounded-xl bg-[#172232] flex items-center justify-center p-1 shadow-md shadow-slate-900/15 border border-slate-700/60 overflow-hidden transition-transform group-hover:scale-105">
             <svg id="defaultAtkSvg" class="w-full h-full" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <filter id="atkShadow" x="-20%" y="-20%" width="150%" height="150%">
@@ -59,44 +34,29 @@
                 </filter>
               </defs>
               <g filter="url(#atkShadow)">
-                <!-- Stylized Green 'A' -->
                 <path d="M55 28 L24 85 L20 115 L52 115 L62 94 L39 94 L54 62 L66 86 L61 115 L83 115 L81 60 L60 28 Z" fill="#2eb846" />
-                
-                <!-- Bold Red 'T' with Overhang -->
                 <path d="M56 28 L118 29 L123 49 L99 49 L98 116 L81 116 L83 49 L62 49 Z" fill="#e53835" />
-                
-                <!-- Artistic Curved Cyan-Blue 'K' Wings -->
-                <!-- Upper sweeping wing of K -->
                 <path d="M99 74 C112 67, 126 55, 138 46 C134 58, 124 74, 114 83 C108 88, 102 91, 99 92 Z" fill="#3b82f6" />
-                <!-- Lower flared wing of K -->
                 <path d="M99 74 C104 80, 110 88, 113 94 C120 108, 131 117, 145 119 C133 116, 122 107, 117 97 C112 87, 106 80, 99 74 Z" fill="#3b82f6" />
-                <!-- Connecting center branch of K -->
                 <path d="M98 74 L109 85 L101 92 Z" fill="#2563eb" />
               </g>
             </svg>
             <img id="customAtkImg" class="w-full h-full object-cover hidden rounded-lg" alt="ATK Supermarket Logo" />
           </div>
-          <!-- Tiny edit badge indicator -->
           <span class="absolute -bottom-1 -right-1 bg-slate-800 text-white rounded-full p-0.5 border border-white text-[9px] shadow-xs group-hover:bg-indigo-600 transition-colors">
             <i data-lucide="camera" class="w-2.5 h-2.5"></i>
           </span>
         </div>
 
-        <!-- Hidden File Input for Custom ATK Logo -->
         <input type="file" id="logoFileInput" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
 
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              ATK SUPERMARKET
-            </h1>
-            <span class="text-[10px] tracking-wider uppercase px-2 py-0.5 font-bold bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200/80">Retail POS Ledger</span>
-          </div>
-          <div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+          <h1 class="text-xl font-black text-slate-900 tracking-tight">
+            ATK SUPERMARKET
+          </h1>
+          <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
             <span>(Cashflow & Ledger Tracker)</span>
-            <span class="inline-block w-1 h-1 rounded-full bg-slate-300"></span>
-            <span class="text-emerald-600 font-semibold">Store Accounts & Margin Audit</span>
-            <button onclick="resetLogoToDefault()" id="resetLogoBtn" title="Reset to standard vector logo" class="hidden text-[10px] text-slate-400 hover:text-rose-600 underline ml-1 font-normal">
+            <button onclick="resetLogoToDefault()" id="resetLogoBtn" title="Reset to standard vector logo" class="hidden text-[10px] text-slate-400 hover:text-rose-600 underline font-normal ml-1">
               Reset Logo
             </button>
           </div>
@@ -105,7 +65,6 @@
 
       <!-- Quick Action Controls -->
       <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Currency Selector -->
         <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200 text-xs">
           <span class="text-slate-500 px-1 font-medium">Currency:</span>
           <select id="currencySymbol" onchange="changeCurrency(this.value)" class="bg-transparent font-semibold text-slate-700 focus:outline-hidden cursor-pointer">
@@ -122,9 +81,9 @@
           <span>Export CSV</span>
         </button>
 
-        <button onclick="openModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-xs font-semibold text-white shadow-md shadow-indigo-200 transition-all hover:shadow-lg">
+        <button onclick="openModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-xs font-semibold text-white shadow-md shadow-indigo-100 transition-all">
           <i data-lucide="plus-circle" class="w-4 h-4"></i>
-          <span>New Daily Entry</span>
+          <span>New Entry</span>
         </button>
       </div>
     </div>
@@ -132,208 +91,127 @@
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full grow space-y-6">
 
-    <!-- Formula Reference Banner -->
-    <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-4 sm:p-5 shadow-lg border border-slate-800">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div class="flex items-center gap-2 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-1">
-            <i data-lucide="store" class="w-4 h-4"></i>
-            ATK SUPERMARKET Daily Reconciliation Formulas
-          </div>
-          <p class="text-slate-300 text-xs sm:text-sm">Automated supermarket bookkeeping: inventory restock budgeting, gross margins, and reserved savings.</p>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-          <div class="bg-white/10 backdrop-blur-md rounded-xl px-3 py-2 border border-white/10">
-            <span class="text-indigo-300 font-bold block">A - B = Stock-Out</span>
-            <span class="text-slate-300 text-[11px]">Sale - Gross Profit</span>
-          </div>
-          <div class="bg-white/10 backdrop-blur-md rounded-xl px-3 py-2 border border-white/10">
-            <span class="text-emerald-300 font-bold block">B - D - E = Net Profit</span>
-            <span class="text-slate-300 text-[11px]">Profit - Expense - Savings</span>
-          </div>
-          <div class="bg-white/10 backdrop-blur-md rounded-xl px-3 py-2 border border-white/10">
-            <span class="text-amber-300 font-bold block">A - B - C = Balance Budget</span>
-            <span class="text-slate-300 text-[11px]">Stock-Out - Today's Purchase</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <section>
       <div class="flex items-center justify-between mb-3">
-        <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Summary Performance & Balances</h2>
-        <span id="recordCountBadge" class="text-xs font-medium text-slate-500 bg-slate-200/70 px-2.5 py-0.5 rounded-full">0 Records</span>
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Ledger Overview</h2>
+        <span id="recordCountBadge" class="text-xs font-medium text-slate-500 bg-slate-200/60 px-2.5 py-0.5 rounded-full">0 Records</span>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
         <!-- Total Sale -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs hover:border-slate-300 transition-all">
+        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs">
           <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-medium">Total Sales (A)</span>
+            <span class="text-xs font-medium">Sale</span>
             <span class="p-1 rounded-md bg-blue-50 text-blue-600"><i data-lucide="badge-dollar-sign" class="w-3.5 h-3.5"></i></span>
           </div>
           <div id="kpiTotalSale" class="text-lg sm:text-xl font-bold text-slate-900 mono-num">0</div>
-          <p class="text-[11px] text-slate-400 mt-1">Gross turnover</p>
         </div>
 
-        <!-- Total Profit -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs hover:border-slate-300 transition-all">
+        <!-- Profit -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs">
           <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-medium">Gross Profit (B)</span>
+            <span class="text-xs font-medium">Profit</span>
             <span class="p-1 rounded-md bg-emerald-50 text-emerald-600"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i></span>
           </div>
           <div id="kpiTotalProfit" class="text-lg sm:text-xl font-bold text-emerald-600 mono-num">0</div>
-          <p class="text-[11px] text-slate-400 mt-1" id="kpiProfitMargin">0% margin</p>
         </div>
 
-        <!-- Total Expenses -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs hover:border-slate-300 transition-all">
+        <!-- Today's Purchase -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs">
           <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-medium">Expenses (D)</span>
+            <span class="text-xs font-medium">Today's Purchase</span>
+            <span class="p-1 rounded-md bg-amber-50 text-amber-600"><i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i></span>
+          </div>
+          <div id="kpiTotalPurchase" class="text-lg sm:text-xl font-bold text-amber-600 mono-num">0</div>
+        </div>
+
+        <!-- Expenses -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs">
+          <div class="flex items-center justify-between text-slate-500 mb-1">
+            <span class="text-xs font-medium">Expense</span>
             <span class="p-1 rounded-md bg-rose-50 text-rose-600"><i data-lucide="receipt" class="w-3.5 h-3.5"></i></span>
           </div>
           <div id="kpiTotalExpense" class="text-lg sm:text-xl font-bold text-rose-600 mono-num">0</div>
-          <p class="text-[11px] text-slate-400 mt-1">Daily operations</p>
         </div>
 
-        <!-- Total Savings -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs hover:border-slate-300 transition-all">
+        <!-- Savings -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs">
           <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-medium">Savings (E)</span>
+            <span class="text-xs font-medium">Savings</span>
             <span class="p-1 rounded-md bg-purple-50 text-purple-600"><i data-lucide="piggy-bank" class="w-3.5 h-3.5"></i></span>
           </div>
           <div id="kpiTotalSavings" class="text-lg sm:text-xl font-bold text-purple-600 mono-num">0</div>
-          <p class="text-[11px] text-slate-400 mt-1">Reserved capital</p>
         </div>
 
         <!-- Net Profit -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs hover:border-slate-300 transition-all bg-linear-to-b from-white to-emerald-50/20">
+        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs bg-gradient-to-b from-white to-emerald-50/30">
           <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-semibold text-emerald-800">Net Profit (B-D-E)</span>
+            <span class="text-xs font-semibold text-emerald-800">Net Profit</span>
             <span class="p-1 rounded-md bg-emerald-100 text-emerald-700"><i data-lucide="wallet" class="w-3.5 h-3.5"></i></span>
           </div>
           <div id="kpiTotalNetProfit" class="text-lg sm:text-xl font-extrabold text-emerald-600 mono-num">0</div>
-          <p class="text-[11px] text-emerald-700/80 mt-1">Excluding savings</p>
-        </div>
-
-        <!-- Remaining Purchase Budget -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs hover:border-slate-300 transition-all bg-linear-to-b from-white to-amber-50/20">
-          <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-semibold text-amber-800">Purchasing Balance</span>
-            <span class="p-1 rounded-md bg-amber-100 text-amber-700"><i data-lucide="package" class="w-3.5 h-3.5"></i></span>
-          </div>
-          <div id="kpiTotalBalancePurchase" class="text-lg sm:text-xl font-extrabold text-amber-600 mono-num">0</div>
-          <p class="text-[11px] text-amber-700/80 mt-1">A - B - C accumulated</p>
         </div>
       </div>
     </section>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Trends Chart -->
-      <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-          <div>
-            <h3 class="font-bold text-slate-900 text-sm">Revenue, Purchases & Stock Trends</h3>
-            <p class="text-xs text-slate-500">Chronological track of Gross Sales, Restock (C), and Stock-Out (A-B)</p>
-          </div>
-          <div class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-md">Time Series</div>
-        </div>
-        <div class="h-64 sm:h-72 w-full relative">
-          <canvas id="cashflowChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Profit & Distribution Donut Chart -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="font-bold text-slate-900 text-sm">Gross Profit Allocation</h3>
-            <p class="text-xs text-slate-500">B = Net Profit + Expense + Savings</p>
-          </div>
-          <span class="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg"><i data-lucide="pie-chart" class="w-4 h-4"></i></span>
-        </div>
-        <div class="h-64 sm:h-72 w-full relative flex items-center justify-center">
-          <canvas id="profitDistributionChart"></canvas>
-        </div>
-      </div>
-    </div>
-
     <section class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
       <!-- Table Header & Controls -->
       <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <h3 class="font-bold text-slate-900 text-base">Daily Transaction Entries</h3>
-          <span class="text-xs px-2.5 py-0.5 rounded-full font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">Live Auto-Calculated</span>
+        <div>
+          <h3 class="font-bold text-slate-900 text-base">Transaction Records</h3>
+          <p class="text-xs text-slate-400">Complete daily ledger entries with auto-calculated net margins</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
-          <!-- Search / Date filter -->
           <div class="relative">
             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none"></i>
-            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search date or note..." class="pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 w-44 sm:w-56">
+            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search date or note..." class="pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 w-48 sm:w-56">
           </div>
 
-          <!-- Reset / Demo data buttons -->
-          <button onclick="loadSampleDataset()" title="Reset to standard example" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 font-medium transition-colors">
-            Reset Demo
+          <button onclick="loadSampleDataset()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 font-medium transition-colors">
+            Reset Sample
           </button>
-          <button onclick="clearAllData()" title="Erase all records" class="text-xs px-3 py-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 font-medium transition-colors">
+          <button onclick="clearAllData()" class="text-xs px-3 py-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 font-medium transition-colors">
             Clear All
           </button>
         </div>
       </div>
 
-      <!-- Ledger Table -->
+      <!-- Clean Data Table without visible formula indicators -->
       <div class="overflow-x-auto w-full">
         <table class="w-full text-left text-xs text-slate-600">
           <thead class="bg-slate-100/70 border-b border-slate-200 text-slate-700 uppercase tracking-wider text-[11px] font-semibold select-none">
             <tr>
-              <th scope="col" class="py-3 px-4">Date</th>
-              <th scope="col" class="py-3 px-4 text-right">
-                <span class="text-slate-400 font-normal">A:</span> Sale
-              </th>
-              <th scope="col" class="py-3 px-4 text-right">
-                <span class="text-slate-400 font-normal">B:</span> Profit
-              </th>
-              <th scope="col" class="py-3 px-4 text-right bg-slate-100 font-bold text-indigo-900">
-                <span class="text-indigo-400 font-normal">A-B:</span> Stock-Out
-              </th>
-              <th scope="col" class="py-3 px-4 text-right">
-                <span class="text-slate-400 font-normal">C:</span> Purchase
-              </th>
-              <th scope="col" class="py-3 px-4 text-right text-rose-700">
-                <span class="text-rose-400 font-normal">D:</span> Expense
-              </th>
-              <th scope="col" class="py-3 px-4 text-right text-purple-700">
-                <span class="text-purple-400 font-normal">E:</span> Savings
-              </th>
-              <th scope="col" class="py-3 px-4 text-right bg-emerald-50/70 font-bold text-emerald-800">
-                <span class="text-emerald-400 font-normal">B-D-E:</span> Net Profit
-              </th>
-              <th scope="col" class="py-3 px-4 text-right bg-amber-50/70 font-bold text-amber-800">
-                <span class="text-amber-500 font-normal">A-B-C:</span> Purchase Bal.
-              </th>
-              <th scope="col" class="py-3 px-4 text-center">Actions</th>
+              <th scope="col" class="py-3.5 px-4">Date</th>
+              <th scope="col" class="py-3.5 px-4 text-right">Sale</th>
+              <th scope="col" class="py-3.5 px-4 text-right text-emerald-700">Profit</th>
+              <th scope="col" class="py-3.5 px-4 text-right bg-slate-100 font-bold text-slate-800">Stock-Out</th>
+              <th scope="col" class="py-3.5 px-4 text-right text-amber-700">Today's Purchase</th>
+              <th scope="col" class="py-3.5 px-4 text-right text-rose-700">Expense</th>
+              <th scope="col" class="py-3.5 px-4 text-right text-purple-700">Savings</th>
+              <th scope="col" class="py-3.5 px-4 text-right bg-emerald-50/70 font-bold text-emerald-800">Net Profit</th>
+              <th scope="col" class="py-3.5 px-4 text-right bg-amber-50/70 font-bold text-amber-800">Balance Amount for Purchase</th>
+              <th scope="col" class="py-3.5 px-4 text-center">Actions</th>
             </tr>
           </thead>
           <tbody id="ledgerTableBody" class="divide-y divide-slate-100 font-normal">
-            <!-- Dynamic rows will render here -->
+            <!-- Dynamic rows injected here -->
           </tbody>
           <tfoot id="ledgerTableFoot" class="bg-slate-50 border-t-2 border-slate-300 font-bold text-slate-900 text-xs">
-            <!-- Dynamic aggregate totals will render here -->
+            <!-- Dynamic aggregate totals injected here -->
           </tfoot>
         </table>
       </div>
 
-      <!-- Empty state container -->
+      <!-- Empty state -->
       <div id="emptyState" class="hidden py-12 flex flex-col items-center justify-center text-center px-4">
         <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
-          <i data-lucide="folder-open" class="w-6 h-6"></i>
+          <i data-lucide="inbox" class="w-6 h-6"></i>
         </div>
-        <p class="font-medium text-slate-700 text-sm">No cashflow records found</p>
-        <p class="text-slate-400 text-xs mt-1">Start by recording your daily sales and inventory movements.</p>
+        <p class="font-medium text-slate-700 text-sm">No ledger entries found</p>
+        <p class="text-slate-400 text-xs mt-1">Record your daily sales to calculate balances automatically.</p>
         <button onclick="openModal()" class="mt-3 px-3 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-xs font-semibold">
-          Add First Entry
+          Add New Entry
         </button>
       </div>
     </section>
@@ -341,8 +219,7 @@
   </main>
 
   <div id="entryModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 transform transition-all">
-      <!-- Modal Header -->
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
       <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold">
@@ -350,7 +227,7 @@
           </div>
           <div>
             <h3 id="modalTitle" class="text-base font-bold text-slate-900">Record Daily Entry</h3>
-            <p class="text-xs text-slate-500">Live formula preview updates as you type</p>
+            <p class="text-xs text-slate-400">All balances calculate automatically</p>
           </div>
         </div>
         <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
@@ -358,7 +235,6 @@
         </button>
       </div>
 
-      <!-- Modal Form Body -->
       <form id="entryForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
         <input type="hidden" id="entryId" value="">
 
@@ -369,68 +245,52 @@
             <input type="date" id="inputDate" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-mono">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Optional Note / Reference</label>
-            <input type="text" id="inputNote" placeholder="e.g. Weekend Rush, Batch #4" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Note (Optional)</label>
+            <input type="text" id="inputNote" placeholder="e.g. Day summary, batch" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
         </div>
 
         <div class="border-t border-slate-100 pt-3">
-          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">Direct Input Variables</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <!-- A: Sale -->
+            <!-- Sale -->
             <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1 flex items-center justify-between">
-                <span>(A) Gross Sale</span>
-                <span class="text-[10px] text-slate-400">Total Revenue</span>
-              </label>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Sale</label>
               <div class="relative">
                 <span class="curr-sign absolute left-3 top-2 text-slate-400 text-xs font-mono">₹</span>
                 <input type="number" step="any" min="0" id="inputSale" oninput="calculateModalDerivations()" required placeholder="80000" class="pl-8 pr-3 py-2 w-full text-xs font-mono bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
               </div>
             </div>
 
-            <!-- B: Profit -->
+            <!-- Profit -->
             <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1 flex items-center justify-between">
-                <span>(B) Gross Profit</span>
-                <span class="text-[10px] text-slate-400">Marked Margin</span>
-              </label>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Profit</label>
               <div class="relative">
                 <span class="curr-sign absolute left-3 top-2 text-slate-400 text-xs font-mono">₹</span>
                 <input type="number" step="any" min="0" id="inputProfit" oninput="calculateModalDerivations()" required placeholder="6000" class="pl-8 pr-3 py-2 w-full text-xs font-mono bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
               </div>
             </div>
 
-            <!-- C: Today's Purchase -->
+            <!-- Today's Purchase -->
             <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1 flex items-center justify-between">
-                <span>(C) Today's Purchase</span>
-                <span class="text-[10px] text-slate-400">Restock Spend</span>
-              </label>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Today's Purchase</label>
               <div class="relative">
                 <span class="curr-sign absolute left-3 top-2 text-slate-400 text-xs font-mono">₹</span>
                 <input type="number" step="any" min="0" id="inputPurchase" oninput="calculateModalDerivations()" required placeholder="24000" class="pl-8 pr-3 py-2 w-full text-xs font-mono bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
               </div>
             </div>
 
-            <!-- D: Expense -->
+            <!-- Expense -->
             <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1 flex items-center justify-between">
-                <span>(D) Daily Expense</span>
-                <span class="text-[10px] text-slate-400">Store / Ops</span>
-              </label>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Expense</label>
               <div class="relative">
                 <span class="curr-sign absolute left-3 top-2 text-slate-400 text-xs font-mono">₹</span>
                 <input type="number" step="any" min="0" id="inputExpense" oninput="calculateModalDerivations()" required placeholder="3000" class="pl-8 pr-3 py-2 w-full text-xs font-mono bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
               </div>
             </div>
 
-            <!-- E: Savings -->
+            <!-- Savings -->
             <div class="sm:col-span-2">
-              <label class="block text-xs font-medium text-slate-700 mb-1 flex items-center justify-between">
-                <span>(E) Savings Set Aside</span>
-                <span class="text-[10px] text-slate-400">Reserved Fund</span>
-              </label>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Savings</label>
               <div class="relative">
                 <span class="curr-sign absolute left-3 top-2 text-slate-400 text-xs font-mono">₹</span>
                 <input type="number" step="any" min="0" id="inputSavings" oninput="calculateModalDerivations()" required placeholder="750" class="pl-8 pr-3 py-2 w-full text-xs font-mono bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
@@ -439,34 +299,32 @@
           </div>
         </div>
 
-        <!-- Real-Time Calculated Preview Box -->
+        <!-- Calculated Preview Cards (Cleaned of formulas) -->
         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-2">
-          <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-            <i data-lucide="cpu" class="w-3.5 h-3.5 text-indigo-500"></i> Live Auto-Calculations
-          </div>
+          <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Calculated Values</div>
           <div class="grid grid-cols-3 gap-2 text-xs">
             <div class="bg-white p-2 rounded-lg border border-slate-100">
-              <div class="text-[10px] text-slate-400">A - B (Stock-Out)</div>
-              <div id="previewStockOut" class="font-bold text-indigo-700 mono-num mt-0.5">0</div>
+              <div class="text-[10px] text-slate-400">Stock-Out</div>
+              <div id="previewStockOut" class="font-bold text-slate-800 mono-num mt-0.5">0</div>
             </div>
             <div class="bg-white p-2 rounded-lg border border-slate-100">
-              <div class="text-[10px] text-slate-400">B-D-E (Net Profit)</div>
+              <div class="text-[10px] text-slate-400">Net Profit</div>
               <div id="previewNetProfit" class="font-bold text-emerald-700 mono-num mt-0.5">0</div>
             </div>
             <div class="bg-white p-2 rounded-lg border border-slate-100">
-              <div class="text-[10px] text-slate-400">A-B-C (Purchase Bal)</div>
+              <div class="text-[10px] text-slate-400">Balance for Purchase</div>
               <div id="previewPurchaseBal" class="font-bold text-amber-700 mono-num mt-0.5">0</div>
             </div>
           </div>
         </div>
 
-        <!-- Form Actions -->
+        <!-- Modal Actions -->
         <div class="flex items-center justify-end gap-2 pt-2">
           <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors">
             Cancel
           </button>
           <button type="submit" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md shadow-indigo-100 transition-all">
-            Save Record
+            Save Entry
           </button>
         </div>
       </form>
@@ -485,76 +343,41 @@
 
   <!-- Footer -->
   <footer class="bg-white border-t border-slate-200 mt-auto py-4">
-    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400">
-      ATK SUPERMARKET • Cashflow & Ledger Tracker System • Real-time formula balance & inventory audit
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 font-medium">
+      ATK SUPERMARKET • Cashflow & Ledger Tracker
     </div>
   </footer>
 
   <script>
-    // Storage Key
     const STORAGE_KEY = 'atk_supermarket_cashflow_records_v1';
     const CURRENCY_KEY = 'atk_supermarket_currency_v1';
     const LOGO_KEY = 'atk_supermarket_custom_logo_v1';
 
-    // Application state
     let currency = localStorage.getItem(CURRENCY_KEY) || '₹';
     let records = [];
-    let cashflowChart = null;
-    let profitChart = null;
 
-    // Standard sample dataset from user request image:
-    // A: 80000, B: 6000, A-B: 74000, C: 24000, D: 3000, E: 750, B-D-E: 2250, A-B-C: 50000
+    // Exact reference dataset from your spreadsheet
     const defaultSampleData = [
       {
         id: 'rec_101',
         date: '2026-10-01',
         sale: 80000,
         profit: 6000,
-        stockOut: 74000, // 80000 - 6000
+        stockOut: 74000,
         purchase: 24000,
         expense: 3000,
         savings: 750,
-        netProfit: 2250, // 6000 - 3000 - 750
-        balancePurchase: 50000, // 74000 - 24000
-        note: 'Baseline Ledger Entry (Photo Example)'
-      },
-      {
-        id: 'rec_102',
-        date: '2026-10-02',
-        sale: 92000,
-        profit: 7500,
-        stockOut: 84500,
-        purchase: 30000,
-        expense: 3200,
-        savings: 1000,
-        netProfit: 3300,
-        balancePurchase: 54500,
-        note: 'Weekend Inventory Restock'
-      },
-      {
-        id: 'rec_103',
-        date: '2026-10-03',
-        sale: 65000,
-        profit: 5200,
-        stockOut: 59800,
-        purchase: 15000,
-        expense: 2500,
-        savings: 600,
-        netProfit: 2100,
-        balancePurchase: 44800,
-        note: 'Normal weekday trade'
+        netProfit: 2250,
+        balancePurchase: 50000,
+        note: 'Baseline Record'
       }
     ];
 
     window.addEventListener('DOMContentLoaded', () => {
-      // Set currency select value
       document.getElementById('currencySymbol').value = currency;
       updateCurrencyVisuals();
-
-      // Check for saved custom logo
       loadSavedLogo();
 
-      // Load records from local storage or set default
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
@@ -567,10 +390,8 @@
         saveRecordsToStorage();
       }
 
-      // Initialize icons, render table, and instantiate charts
       lucide.createIcons();
       renderLedger();
-      initCharts();
       updateDashboard();
     });
 
@@ -607,9 +428,9 @@
         try {
           localStorage.setItem(LOGO_KEY, base64Data);
           loadSavedLogo();
-          showToast('ATK Supermarket logo updated');
+          showToast('Logo updated');
         } catch (err) {
-          showToast('Image is too large for storage. Try a smaller file.', true);
+          showToast('Image is too large. Try a smaller file.', true);
         }
       };
       reader.readAsDataURL(file);
@@ -618,7 +439,7 @@
     function resetLogoToDefault() {
       localStorage.removeItem(LOGO_KEY);
       loadSavedLogo();
-      showToast('Reset to default ATK vector logo');
+      showToast('Reset to default vector logo');
     }
 
     function formatMoney(num) {
@@ -635,7 +456,6 @@
       updateCurrencyVisuals();
       renderLedger();
       updateDashboard();
-      updateCharts();
     }
 
     function updateCurrencyVisuals() {
@@ -666,7 +486,7 @@
       toast.classList.remove('translate-y-20', 'opacity-0');
       setTimeout(() => {
         toast.classList.add('translate-y-20', 'opacity-0');
-      }, 2600);
+      }, 2400);
     }
 
     function openModal(editId = null) {
@@ -706,7 +526,7 @@
       document.getElementById('entryModal').classList.add('hidden');
     }
 
-    // Live calculation for the modal summary panel
+    // Mathematical calculations executed seamlessly behind the scenes
     function calculateModalDerivations() {
       const sale = parseFloat(document.getElementById('inputSale').value) || 0;
       const profit = parseFloat(document.getElementById('inputProfit').value) || 0;
@@ -714,12 +534,11 @@
       const expense = parseFloat(document.getElementById('inputExpense').value) || 0;
       const savings = parseFloat(document.getElementById('inputSavings').value) || 0;
 
-      // Formulas:
-      // Stock-out: A - B
+      // Stock-out = Sale - Profit
       const stockOut = sale - profit;
-      // Net Profit: B - D - E
+      // Net Profit = Profit - Expense - Savings
       const netProfit = profit - expense - savings;
-      // Balance Amount for Purchase: A - B - C = stockOut - purchase
+      // Balance Amount for Purchase = Sale - Profit - Today's Purchase
       const balancePurchase = stockOut - purchase;
 
       document.getElementById('previewStockOut').textContent = formatMoney(stockOut);
@@ -738,7 +557,6 @@
       const expense = parseFloat(document.getElementById('inputExpense').value) || 0;
       const savings = parseFloat(document.getElementById('inputSavings').value) || 0;
 
-      // Exact mathematical derivations
       const stockOut = sale - profit;
       const netProfit = profit - expense - savings;
       const balancePurchase = stockOut - purchase;
@@ -765,17 +583,15 @@
         }
       } else {
         records.unshift(newRecord);
-        showToast("New daily entry recorded");
+        showToast("New entry recorded");
       }
 
-      // Sort by date descending
       records.sort((a, b) => new Date(b.date) - new Date(a.date));
 
       saveRecordsToStorage();
       closeModal();
       renderLedger();
       updateDashboard();
-      updateCharts();
     }
 
     function deleteRecord(id) {
@@ -784,26 +600,23 @@
       showToast("Record removed");
       renderLedger();
       updateDashboard();
-      updateCharts();
     }
 
     function clearAllData() {
       if (records.length === 0) return;
       records = [];
       saveRecordsToStorage();
-      showToast("All ledger records cleared");
+      showToast("All records cleared");
       renderLedger();
       updateDashboard();
-      updateCharts();
     }
 
     function loadSampleDataset() {
       records = JSON.parse(JSON.stringify(defaultSampleData));
       saveRecordsToStorage();
-      showToast("Reset to sample image scenario");
+      showToast("Reset to sample entry");
       renderLedger();
       updateDashboard();
-      updateCharts();
     }
 
     function renderLedger() {
@@ -827,7 +640,6 @@
 
       emptyState.classList.add('hidden');
 
-      // Totals
       let sumSale = 0, sumProfit = 0, sumStockOut = 0, sumPurchase = 0, sumExpense = 0, sumSavings = 0, sumNetProfit = 0, sumBalancePurchase = 0;
 
       let html = '';
@@ -847,14 +659,14 @@
               <div>${r.date}</div>
               ${r.note ? `<div class="text-[10px] text-slate-400 font-sans truncate max-w-[130px]">${r.note}</div>` : ''}
             </td>
-            <td class="py-3 px-4 text-right mono-num font-medium text-slate-700">${formatMoney(r.sale)}</td>
+            <td class="py-3 px-4 text-right mono-num font-medium text-slate-800">${formatMoney(r.sale)}</td>
             <td class="py-3 px-4 text-right mono-num font-medium text-emerald-600">${formatMoney(r.profit)}</td>
-            <td class="py-3 px-4 text-right mono-num font-semibold text-indigo-700 bg-slate-50/50">${formatMoney(r.stockOut)}</td>
-            <td class="py-3 px-4 text-right mono-num text-slate-700">${formatMoney(r.purchase)}</td>
+            <td class="py-3 px-4 text-right mono-num font-semibold text-slate-900 bg-slate-50/60">${formatMoney(r.stockOut)}</td>
+            <td class="py-3 px-4 text-right mono-num text-amber-700 font-medium">${formatMoney(r.purchase)}</td>
             <td class="py-3 px-4 text-right mono-num text-rose-600 font-medium">${formatMoney(r.expense)}</td>
             <td class="py-3 px-4 text-right mono-num text-purple-600 font-medium">${formatMoney(r.savings)}</td>
-            <td class="py-3 px-4 text-right mono-num font-bold text-emerald-700 bg-emerald-50/30">${formatMoney(r.netProfit)}</td>
-            <td class="py-3 px-4 text-right mono-num font-bold text-amber-700 bg-amber-50/30">${formatMoney(r.balancePurchase)}</td>
+            <td class="py-3 px-4 text-right mono-num font-bold text-emerald-700 bg-emerald-50/40">${formatMoney(r.netProfit)}</td>
+            <td class="py-3 px-4 text-right mono-num font-bold text-amber-700 bg-amber-50/40">${formatMoney(r.balancePurchase)}</td>
             <td class="py-3 px-4 text-center whitespace-nowrap">
               <div class="inline-flex items-center gap-1.5">
                 <button onclick="openModal('${r.id}')" title="Edit" class="p-1 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
@@ -871,19 +683,18 @@
 
       tbody.innerHTML = html;
 
-      // Render Table Foot with Totals
       tfoot.innerHTML = `
         <tr>
-          <td class="py-3.5 px-4 font-bold text-slate-900">Total (${filtered.length})</td>
+          <td class="py-3.5 px-4 font-bold text-slate-900">Total</td>
           <td class="py-3.5 px-4 text-right mono-num font-bold text-slate-900">${formatMoney(sumSale)}</td>
           <td class="py-3.5 px-4 text-right mono-num font-bold text-emerald-700">${formatMoney(sumProfit)}</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-indigo-800 bg-slate-100">${formatMoney(sumStockOut)}</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-slate-800">${formatMoney(sumPurchase)}</td>
+          <td class="py-3.5 px-4 text-right mono-num font-bold text-slate-900 bg-slate-100">${formatMoney(sumStockOut)}</td>
+          <td class="py-3.5 px-4 text-right mono-num font-bold text-amber-700">${formatMoney(sumPurchase)}</td>
           <td class="py-3.5 px-4 text-right mono-num font-bold text-rose-700">${formatMoney(sumExpense)}</td>
           <td class="py-3.5 px-4 text-right mono-num font-bold text-purple-700">${formatMoney(sumSavings)}</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-emerald-700 bg-emerald-100/40">${formatMoney(sumNetProfit)}</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-amber-700 bg-amber-100/40">${formatMoney(sumBalancePurchase)}</td>
-          <td class="py-3.5 px-4 text-center text-[10px] text-slate-400 font-sans">Reconciled</td>
+          <td class="py-3.5 px-4 text-right mono-num font-bold text-emerald-700 bg-emerald-100/50">${formatMoney(sumNetProfit)}</td>
+          <td class="py-3.5 px-4 text-right mono-num font-bold text-amber-700 bg-amber-100/50">${formatMoney(sumBalancePurchase)}</td>
+          <td class="py-3.5 px-4 text-center"></td>
         </tr>
       `;
 
@@ -895,161 +706,23 @@
     }
 
     function updateDashboard() {
-      let totalSale = 0;
-      let totalProfit = 0;
-      let totalExpense = 0;
-      let totalSavings = 0;
-      let totalNetProfit = 0;
-      let totalBalancePurchase = 0;
+      let totalSale = 0, totalProfit = 0, totalPurchase = 0, totalExpense = 0, totalSavings = 0, totalNetProfit = 0;
 
       records.forEach(r => {
         totalSale += r.sale;
         totalProfit += r.profit;
+        totalPurchase += r.purchase;
         totalExpense += r.expense;
         totalSavings += r.savings;
         totalNetProfit += r.netProfit;
-        totalBalancePurchase += r.balancePurchase;
       });
 
       document.getElementById('kpiTotalSale').textContent = formatMoney(totalSale);
       document.getElementById('kpiTotalProfit').textContent = formatMoney(totalProfit);
+      document.getElementById('kpiTotalPurchase').textContent = formatMoney(totalPurchase);
       document.getElementById('kpiTotalExpense').textContent = formatMoney(totalExpense);
       document.getElementById('kpiTotalSavings').textContent = formatMoney(totalSavings);
       document.getElementById('kpiTotalNetProfit').textContent = formatMoney(totalNetProfit);
-      document.getElementById('kpiTotalBalancePurchase').textContent = formatMoney(totalBalancePurchase);
-
-      const margin = totalSale > 0 ? ((totalProfit / totalSale) * 100).toFixed(1) : 0;
-      document.getElementById('kpiProfitMargin').textContent = `${margin}% gross margin`;
-    }
-
-    function initCharts() {
-      const trendCtx = document.getElementById('cashflowChart').getContext('2d');
-      const profitCtx = document.getElementById('profitDistributionChart').getContext('2d');
-
-      // Cashflow Time Series
-      cashflowChart = new Chart(trendCtx, {
-        type: 'line',
-        data: getChartTrendData(),
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: {
-              position: 'top',
-              labels: { boxWidth: 10, font: { size: 11, family: 'Inter' } }
-            },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => `${ctx.dataset.label}: ${formatMoney(ctx.raw)}`
-              }
-            }
-          },
-          scales: {
-            x: { grid: { display: false }, ticks: { font: { size: 10, family: 'Inter' } } },
-            y: { 
-              grid: { color: '#f1f5f9' }, 
-              ticks: { 
-                font: { size: 10, family: 'JetBrains Mono' },
-                callback: (val) => formatMoney(val)
-              } 
-            }
-          }
-        }
-      });
-
-      // Profit Breakdown Donut
-      profitChart = new Chart(profitCtx, {
-        type: 'doughnut',
-        data: getProfitDonutData(),
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: { boxWidth: 12, padding: 12, font: { size: 11, family: 'Inter' } }
-            },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => `${ctx.label}: ${formatMoney(ctx.raw)}`
-              }
-            }
-          },
-          cutout: '70%'
-        }
-      });
-    }
-
-    function getChartTrendData() {
-      // Sort chronologically for charts (oldest to newest)
-      const sorted = [...records].sort((a, b) => new Date(a.date) - new Date(b.date));
-      const labels = sorted.map(r => r.date);
-      const sales = sorted.map(r => r.sale);
-      const purchases = sorted.map(r => r.purchase);
-      const stockOuts = sorted.map(r => r.stockOut);
-
-      return {
-        labels: labels.length > 0 ? labels : ['No data'],
-        datasets: [
-          {
-            label: 'Gross Sales (A)',
-            data: sales,
-            borderColor: '#6366f1',
-            backgroundColor: 'rgba(99, 102, 241, 0.1)',
-            fill: true,
-            tension: 0.3,
-            borderWidth: 2.5
-          },
-          {
-            label: 'Stock-Out (A-B)',
-            data: stockOuts,
-            borderColor: '#0ea5e9',
-            borderDash: [4, 4],
-            backgroundColor: 'transparent',
-            tension: 0.3,
-            borderWidth: 2
-          },
-          {
-            label: 'Purchase (C)',
-            data: purchases,
-            borderColor: '#f59e0b',
-            backgroundColor: 'transparent',
-            tension: 0.3,
-            borderWidth: 2
-          }
-        ]
-      };
-    }
-
-    function getProfitDonutData() {
-      let net = 0, exp = 0, sav = 0;
-      records.forEach(r => {
-        net += r.netProfit;
-        exp += r.expense;
-        sav += r.savings;
-      });
-
-      const hasData = (net + exp + sav) > 0;
-
-      return {
-        labels: ['Net Profit (B-D-E)', 'Store Expense (D)', 'Savings (E)'],
-        datasets: [{
-          data: hasData ? [net, exp, sav] : [1, 0, 0],
-          backgroundColor: hasData ? ['#10b981', '#f43f5e', '#a855f7'] : ['#e2e8f0', '#e2e8f0', '#e2e8f0'],
-          borderWidth: 2,
-          borderColor: '#ffffff'
-        }]
-      };
-    }
-
-    function updateCharts() {
-      if (!cashflowChart || !profitChart) return;
-      cashflowChart.data = getChartTrendData();
-      cashflowChart.update();
-
-      profitChart.data = getProfitDonutData();
-      profitChart.update();
     }
 
     function exportToCSV() {
@@ -1058,7 +731,7 @@
         return;
       }
 
-      const headers = ["Date", "A_Sale", "B_Profit", "StockOut_A_minus_B", "C_Purchase", "D_Expense", "E_Savings", "NetProfit_B_minus_D_minus_E", "Balance_Purchase_A_minus_B_minus_C", "Note"];
+      const headers = ["Date", "Sale", "Profit", "Stock-Out", "Today's Purchase", "Expense", "Savings", "Net Profit", "Balance Amount for Purchase", "Note"];
       const rows = records.map(r => [
         `"${r.date}"`,
         r.sale,
