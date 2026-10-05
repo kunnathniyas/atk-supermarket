@@ -3,552 +3,760 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ATK SUPERMARKET (Cashflow & Ledger Tracker)</title>
+  <title>ATK SUPERMARKET - Expense, Profit & Purchase Tracker</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .mono-num { font-family: 'JetBrains Mono', monospace; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #f8fafc; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .mono-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-feature-settings: "tnum" 1;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-indigo-600 selection:text-white">
 
+  <!-- Header -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center space-x-3.5">
-        <!-- ATK Logo Container (Embedded vector + custom upload option) -->
-        <div class="relative group cursor-pointer" onclick="document.getElementById('logoFileInput').click()" title="Click to upload custom logo file (e.g. ATK.jpg)">
-          <div id="brandLogoContainer" class="w-12 h-12 rounded-xl bg-[#172232] flex items-center justify-center p-1 shadow-md shadow-slate-900/15 border border-slate-700/60 overflow-hidden transition-transform group-hover:scale-105">
-            <svg id="defaultAtkSvg" class="w-full h-full" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      
+      <!-- Brand & ATK Logo -->
+      <div class="flex items-center gap-3.5">
+        <div class="relative group cursor-pointer" onclick="document.getElementById('logoFileInput').click()" title="Click to upload/change custom ATK logo image">
+          <div id="logoContainer" class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#0f172a] p-1.5 flex items-center justify-center shadow-md border border-slate-700/60 overflow-hidden transition-transform transform group-hover:scale-105">
+            <!-- Custom image if uploaded, else vector SVG -->
+            <img id="customLogoImg" class="w-full h-full object-contain hidden" alt="ATK Logo">
+            <svg id="vectorLogoSvg" viewBox="0 0 100 100" class="w-full h-full">
               <defs>
                 <filter id="atkShadow" x="-20%" y="-20%" width="150%" height="150%">
-                  <feDropShadow dx="3" dy="4" stdDeviation="1.5" flood-color="#0a0f16" flood-opacity="0.85" />
+                  <feDropShadow dx="3" dy="4" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.6"/>
                 </filter>
               </defs>
-              <g filter="url(#atkShadow)">
-                <path d="M55 28 L24 85 L20 115 L52 115 L62 94 L39 94 L54 62 L66 86 L61 115 L83 115 L81 60 L60 28 Z" fill="#2eb846" />
-                <path d="M56 28 L118 29 L123 49 L99 49 L98 116 L81 116 L83 49 L62 49 Z" fill="#e53835" />
-                <path d="M99 74 C112 67, 126 55, 138 46 C134 58, 124 74, 114 83 C108 88, 102 91, 99 92 Z" fill="#3b82f6" />
-                <path d="M99 74 C104 80, 110 88, 113 94 C120 108, 131 117, 145 119 C133 116, 122 107, 117 97 C112 87, 106 80, 99 74 Z" fill="#3b82f6" />
-                <path d="M98 74 L109 85 L101 92 Z" fill="#2563eb" />
-              </g>
+              <!-- A: Vibrant Green Left Leg & Crossbar -->
+              <path d="M 12 76 L 36 20 L 49 20 L 32 76 Z" fill="#22c55e" filter="url(#atkShadow)"/>
+              <path d="M 23 54 L 43 54 L 41 62 L 20 62 Z" fill="#22c55e" filter="url(#atkShadow)"/>
+              <!-- T: Bold Red Overhanging Head & Central Stem -->
+              <path d="M 33 20 L 73 20 L 75 32 L 35 32 Z" fill="#ef4444" filter="url(#atkShadow)"/>
+              <path d="M 48 30 L 61 30 L 61 76 L 48 76 Z" fill="#ef4444" filter="url(#atkShadow)"/>
+              <!-- K: Dynamic Sweeping Blue Wings -->
+              <path d="M 61 45 C 68 38, 76 28, 86 31 C 82 39, 76 46, 68 53 C 74 58, 82 66, 88 77 C 78 72, 72 65, 61 57 Z" fill="#3b82f6" filter="url(#atkShadow)"/>
             </svg>
-            <img id="customAtkImg" class="w-full h-full object-cover hidden rounded-lg" alt="ATK Supermarket Logo" />
           </div>
-          <span class="absolute -bottom-1 -right-1 bg-slate-800 text-white rounded-full p-0.5 border border-white text-[9px] shadow-xs group-hover:bg-indigo-600 transition-colors">
-            <i data-lucide="camera" class="w-2.5 h-2.5"></i>
-          </span>
+          <span class="absolute -bottom-1 -right-1 bg-slate-900 text-[9px] text-white px-1.5 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity border border-slate-700 shadow-sm">Edit</span>
+          <input type="file" id="logoFileInput" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
         </div>
 
-        <input type="file" id="logoFileInput" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
-
         <div>
-          <h1 class="text-xl font-black text-slate-900 tracking-tight">
-            ATK SUPERMARKET
-          </h1>
-          <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
-            <span>(Cashflow & Ledger Tracker)</span>
-            <button onclick="resetLogoToDefault()" id="resetLogoBtn" title="Reset to standard vector logo" class="hidden text-[10px] text-slate-400 hover:text-rose-600 underline font-normal ml-1">
-              Reset Logo
-            </button>
-          </div>
+          <h1 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 leading-tight">ATK SUPERMARKET</h1>
+          <p class="text-xs sm:text-sm font-semibold text-slate-500 tracking-wide">(Expense, Profit & Purchase Tracker)</p>
         </div>
       </div>
 
-      <!-- Quick Action Controls -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200 text-xs">
-          <span class="text-slate-500 px-1 font-medium">Currency:</span>
-          <select id="currencySymbol" onchange="changeCurrency(this.value)" class="bg-transparent font-semibold text-slate-700 focus:outline-hidden cursor-pointer">
-            <option value="₹">INR (₹)</option>
+      <!-- Action Toolbar -->
+      <div class="flex items-center flex-wrap gap-2.5">
+        <!-- Currency Selector -->
+        <div class="flex items-center bg-slate-100 border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-2xs">
+          <span class="text-xs font-semibold text-slate-500 mr-2">Currency:</span>
+          <select id="currencySelector" onchange="changeCurrency(this.value)" class="bg-transparent text-xs font-bold text-slate-800 focus:outline-hidden cursor-pointer">
+            <option value="₹" selected>INR (₹)</option>
             <option value="$">USD ($)</option>
             <option value="€">EUR (€)</option>
             <option value="£">GBP (£)</option>
-            <option value="₱">PHP (₱)</option>
+            <option value="SAR">SAR (﷼)</option>
+            <option value="AED">AED (د.إ)</option>
           </select>
         </div>
 
-        <button onclick="exportToCSV()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-xs transition-colors">
-          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+        <!-- Explicit "Save" Button -->
+        <button onclick="explicitSaveLedger()" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>Save</span>
+        </button>
+
+        <!-- Export CSV Button -->
+        <button onclick="exportToCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold rounded-xl shadow-2xs transition-colors cursor-pointer">
+          <i data-lucide="download" class="w-4 h-4 text-slate-500"></i>
           <span>Export CSV</span>
         </button>
 
-        <button onclick="openModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-xs font-semibold text-white shadow-md shadow-indigo-100 transition-all">
+        <!-- New Entry Button -->
+        <button onclick="openEntryModal()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md shadow-indigo-600/20 transition-all cursor-pointer">
           <i data-lucide="plus-circle" class="w-4 h-4"></i>
-          <span>New Entry</span>
+          <span>+ New Entry</span>
         </button>
       </div>
+
     </div>
   </header>
 
+  <!-- Main Container -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full grow space-y-6">
 
-    <section>
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Ledger Overview</h2>
-        <span id="recordCountBadge" class="text-xs font-medium text-slate-500 bg-slate-200/60 px-2.5 py-0.5 rounded-full">0 Records</span>
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-2.5 h-2.5 rounded-full bg-indigo-600"></div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500">Ledger Overview</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="lastSavedIndicator" class="text-[11px] font-medium text-slate-400 hidden sm:inline"></span>
+          <span id="recordCountBadge" class="text-xs font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-2xs">
+            0 Records
+          </span>
+        </div>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
-        <!-- Total Sale -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs">
-          <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-medium">Sale</span>
-            <span class="p-1 rounded-md bg-blue-50 text-blue-600"><i data-lucide="badge-dollar-sign" class="w-3.5 h-3.5"></i></span>
+      <!-- ROW 1: 5 Standard Compact Metric Boxes -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        <!-- 1. Sale -->
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow">
+          <div class="flex items-center justify-between text-slate-500 mb-1.5">
+            <span class="text-xs font-semibold text-slate-600">Sale</span>
+            <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+              <i data-lucide="circle-dollar-sign" class="w-4 h-4"></i>
+            </div>
           </div>
-          <div id="kpiTotalSale" class="text-lg sm:text-xl font-bold text-slate-900 mono-num">0</div>
+          <div id="kpiTotalSale" class="text-base sm:text-lg font-bold text-slate-900 mono-num">0.00</div>
         </div>
 
-        <!-- Profit -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs">
-          <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-medium">Profit</span>
-            <span class="p-1 rounded-md bg-emerald-50 text-emerald-600"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i></span>
+        <!-- 2. Profit -->
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow">
+          <div class="flex items-center justify-between text-slate-500 mb-1.5">
+            <span class="text-xs font-semibold text-slate-600">Profit</span>
+            <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+            </div>
           </div>
-          <div id="kpiTotalProfit" class="text-lg sm:text-xl font-bold text-emerald-600 mono-num">0</div>
+          <div id="kpiTotalProfit" class="text-base sm:text-lg font-bold text-emerald-600 mono-num">0.00</div>
         </div>
 
-        <!-- Today's Purchase -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs">
-          <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-medium">Today's Purchase</span>
-            <span class="p-1 rounded-md bg-amber-50 text-amber-600"><i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i></span>
+        <!-- 3. Stock-Out -->
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow">
+          <div class="flex items-center justify-between text-slate-500 mb-1.5">
+            <span class="text-xs font-semibold text-slate-600">Stock-Out</span>
+            <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
+              <i data-lucide="boxes" class="w-4 h-4"></i>
+            </div>
           </div>
-          <div id="kpiTotalPurchase" class="text-lg sm:text-xl font-bold text-amber-600 mono-num">0</div>
+          <div id="kpiTotalStockOut" class="text-base sm:text-lg font-bold text-slate-800 mono-num">0.00</div>
         </div>
 
-        <!-- Expenses -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs">
-          <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-medium">Expense</span>
-            <span class="p-1 rounded-md bg-rose-50 text-rose-600"><i data-lucide="receipt" class="w-3.5 h-3.5"></i></span>
+        <!-- 4. Today's Purchase -->
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow">
+          <div class="flex items-center justify-between text-slate-500 mb-1.5">
+            <span class="text-xs font-semibold text-slate-600">Today's Purchase</span>
+            <div class="w-7 h-7 rounded-lg bg-cyan-50 text-cyan-600 flex items-center justify-center">
+              <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+            </div>
           </div>
-          <div id="kpiTotalExpense" class="text-lg sm:text-xl font-bold text-rose-600 mono-num">0</div>
+          <div id="kpiTotalPurchase" class="text-base sm:text-lg font-bold text-cyan-700 mono-num">0.00</div>
         </div>
 
-        <!-- Savings -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs">
-          <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-medium">Savings</span>
-            <span class="p-1 rounded-md bg-purple-50 text-purple-600"><i data-lucide="piggy-bank" class="w-3.5 h-3.5"></i></span>
+        <!-- 5. Expense -->
+        <div class="col-span-2 sm:col-span-1 lg:col-span-1 bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow">
+          <div class="flex items-center justify-between text-slate-500 mb-1.5">
+            <span class="text-xs font-semibold text-slate-600">Expense</span>
+            <div class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
+              <i data-lucide="receipt" class="w-4 h-4"></i>
+            </div>
           </div>
-          <div id="kpiTotalSavings" class="text-lg sm:text-xl font-bold text-purple-600 mono-num">0</div>
+          <div id="kpiTotalExpense" class="text-base sm:text-lg font-bold text-rose-600 mono-num">0.00</div>
+        </div>
+      </div>
+
+      <!-- ROW 2: PROMINENT HIGHLIGHTED BOXES (SAVINGS IN VIOLET, NET PROFIT DYNAMIC GREEN/RED, BALANCE IN BLUE) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+        
+        <!-- BIG BOX 1: SAVINGS (VIBRANT VIOLET) -->
+        <div class="bg-gradient-to-br from-purple-500/10 via-white to-purple-50 rounded-2xl p-5 border-2 border-purple-400 shadow-md shadow-purple-500/10 relative overflow-hidden transition-all hover:border-purple-500 hover:shadow-lg">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <span class="text-xs font-black text-purple-900 uppercase tracking-wider block">Savings</span>
+              <span class="text-[11px] text-purple-600 font-medium">Accumulated Reserve</span>
+            </div>
+            <div class="w-11 h-11 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-600/30">
+              <i data-lucide="piggy-bank" class="w-6 h-6"></i>
+            </div>
+          </div>
+          <div id="kpiTotalSavings" class="text-2xl sm:text-3xl font-extrabold text-purple-700 mono-num tracking-tight mt-1">₹ 0.00</div>
         </div>
 
-        <!-- Net Profit -->
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs bg-gradient-to-b from-white to-emerald-50/30">
-          <div class="flex items-center justify-between text-slate-500 mb-1">
-            <span class="text-xs font-semibold text-emerald-800">Net Profit</span>
-            <span class="p-1 rounded-md bg-emerald-100 text-emerald-700"><i data-lucide="wallet" class="w-3.5 h-3.5"></i></span>
+        <!-- BIG BOX 2: NET PROFIT (GREEN IF >= 0, ENTIRE BOX TURNS RED IF < 0) -->
+        <div id="netProfitCard" class="bg-gradient-to-br from-emerald-500/10 via-white to-emerald-50 rounded-2xl p-5 border-2 border-emerald-400 shadow-md shadow-emerald-500/10 relative overflow-hidden transition-all hover:shadow-lg">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <span id="netProfitCardLabel" class="text-xs font-black text-emerald-900 uppercase tracking-wider block">Net Profit</span>
+              <span id="netProfitCardSub" class="text-[11px] text-emerald-600 font-medium">Savings Excluded</span>
+            </div>
+            <div id="netProfitCardIconWrapper" class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/30 transition-colors">
+              <i id="netProfitCardIcon" data-lucide="wallet" class="w-6 h-6"></i>
+            </div>
           </div>
-          <div id="kpiTotalNetProfit" class="text-lg sm:text-xl font-extrabold text-emerald-600 mono-num">0</div>
+          <div id="kpiTotalNetProfit" class="text-2xl sm:text-3xl font-extrabold text-emerald-700 mono-num tracking-tight mt-1">₹ 0.00</div>
         </div>
+
+        <!-- BIG BOX 3: BALANCE AMOUNT FOR PURCHASE (INDIGO/BLUE ACCENT) -->
+        <div class="bg-gradient-to-br from-blue-500/10 via-white to-sky-50 rounded-2xl p-5 border-2 border-blue-400 shadow-md shadow-blue-500/15 relative overflow-hidden transition-all hover:border-blue-500 hover:shadow-lg">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <span class="text-xs font-black text-blue-900 uppercase tracking-wider block">Balance Amount for Purchase</span>
+              <span class="text-[11px] text-blue-600 font-medium">Available Restock Fund</span>
+            </div>
+            <div class="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/30">
+              <i data-lucide="badge-percent" class="w-6 h-6"></i>
+            </div>
+          </div>
+          <div id="kpiTotalBalancePurchase" class="text-2xl sm:text-3xl font-extrabold text-blue-800 mono-num tracking-tight mt-1">₹ 0.00</div>
+        </div>
+
       </div>
     </section>
 
     <section class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-      <!-- Table Header & Controls -->
-      <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <!-- Search & Header Bar -->
+      <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white">
         <div>
-          <h3 class="font-bold text-slate-900 text-base">Transaction Records</h3>
-          <p class="text-xs text-slate-400">Complete daily ledger entries with auto-calculated net margins</p>
+          <h3 class="font-bold text-slate-900 text-base">Ledger Entries</h3>
+          <p class="text-xs text-slate-500">All saved records with automatic daily balance computation</p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2.5">
-          <div class="relative">
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none"></i>
-            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search date or note..." class="pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 w-48 sm:w-56">
-          </div>
-
-          <button onclick="loadSampleDataset()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 font-medium transition-colors">
-            Reset Sample
-          </button>
-          <button onclick="clearAllData()" class="text-xs px-3 py-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 font-medium transition-colors">
-            Clear All
-          </button>
+        <div class="relative w-full sm:w-72">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none"></i>
+          <input type="text" id="searchInput" oninput="applySearchFilter()" placeholder="Search date or remarks..." class="pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 w-full transition-all">
         </div>
       </div>
 
-      <!-- Clean Data Table without visible formula indicators -->
-      <div class="overflow-x-auto w-full">
-        <table class="w-full text-left text-xs text-slate-600">
-          <thead class="bg-slate-100/70 border-b border-slate-200 text-slate-700 uppercase tracking-wider text-[11px] font-semibold select-none">
-            <tr>
-              <th scope="col" class="py-3.5 px-4">Date</th>
-              <th scope="col" class="py-3.5 px-4 text-right">Sale</th>
-              <th scope="col" class="py-3.5 px-4 text-right text-emerald-700">Profit</th>
-              <th scope="col" class="py-3.5 px-4 text-right bg-slate-100 font-bold text-slate-800">Stock-Out</th>
-              <th scope="col" class="py-3.5 px-4 text-right text-amber-700">Today's Purchase</th>
-              <th scope="col" class="py-3.5 px-4 text-right text-rose-700">Expense</th>
-              <th scope="col" class="py-3.5 px-4 text-right text-purple-700">Savings</th>
-              <th scope="col" class="py-3.5 px-4 text-right bg-emerald-50/70 font-bold text-emerald-800">Net Profit</th>
-              <th scope="col" class="py-3.5 px-4 text-right bg-amber-50/70 font-bold text-amber-800">Balance Amount for Purchase</th>
-              <th scope="col" class="py-3.5 px-4 text-center">Actions</th>
+      <!-- Table Container -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-slate-50/90 text-slate-600 border-b border-slate-200 font-semibold uppercase tracking-wider text-[11px]">
+              <th class="py-3 px-3.5 whitespace-nowrap">Date</th>
+              <th class="py-3 px-3.5 text-right whitespace-nowrap">Sale</th>
+              <th class="py-3 px-3.5 text-right whitespace-nowrap text-emerald-700">Profit</th>
+              <th class="py-3 px-3.5 text-right whitespace-nowrap">Stock-Out</th>
+              <th class="py-3 px-3.5 text-right whitespace-nowrap text-cyan-700">Today's Purchase</th>
+              <th class="py-3 px-3.5 text-right whitespace-nowrap text-rose-700">Expense</th>
+              <th class="py-3 px-3.5 text-right whitespace-nowrap font-bold text-purple-800 bg-purple-50/60">Savings</th>
+              <th class="py-3 px-3.5 text-right whitespace-nowrap font-bold text-slate-800 bg-slate-50">Net Profit</th>
+              <th class="py-3 px-3.5 text-right whitespace-nowrap font-bold text-blue-900 bg-blue-50/50">Balance Amount for Purchase</th>
+              <th class="py-3 px-3.5 text-center whitespace-nowrap">Actions</th>
             </tr>
           </thead>
-          <tbody id="ledgerTableBody" class="divide-y divide-slate-100 font-normal">
-            <!-- Dynamic rows injected here -->
+          <tbody id="ledgerTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+            <!-- Dynamically populated via JavaScript -->
           </tbody>
-          <tfoot id="ledgerTableFoot" class="bg-slate-50 border-t-2 border-slate-300 font-bold text-slate-900 text-xs">
-            <!-- Dynamic aggregate totals injected here -->
+          <tfoot id="ledgerTableFooter" class="bg-slate-50 border-t-2 border-slate-300 font-bold text-slate-800 text-xs">
+            <!-- Dynamically calculated summary totals -->
           </tfoot>
         </table>
       </div>
 
-      <!-- Empty state -->
-      <div id="emptyState" class="hidden py-12 flex flex-col items-center justify-center text-center px-4">
-        <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
-          <i data-lucide="inbox" class="w-6 h-6"></i>
+      <!-- Clean Empty State (When zero records exist) -->
+      <div id="emptyState" class="p-12 text-center">
+        <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center mx-auto mb-3 shadow-2xs">
+          <i data-lucide="clipboard-list" class="w-7 h-7"></i>
         </div>
-        <p class="font-medium text-slate-700 text-sm">No ledger entries found</p>
-        <p class="text-slate-400 text-xs mt-1">Record your daily sales to calculate balances automatically.</p>
-        <button onclick="openModal()" class="mt-3 px-3 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-xs font-semibold">
-          Add New Entry
+        <h4 class="text-sm font-bold text-slate-800">No ledger records yet</h4>
+        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Click "+ New Entry" above to record daily supermarket sales, purchases, and expenses.</p>
+        <button onclick="openEntryModal()" class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Add First Record</span>
         </button>
       </div>
     </section>
 
   </main>
 
-  <div id="entryModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+  <!-- MODAL: ADD / EDIT ENTRY -->
+  <div id="entryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 animate-in fade-in duration-150">
+      
+      <!-- Modal Header -->
+      <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold">
-            <i data-lucide="edit-3" class="w-4 h-4"></i>
+          <div class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 id="modalTitle" class="text-base font-bold text-slate-900">Record Daily Entry</h3>
-            <p class="text-xs text-slate-400">All balances calculate automatically</p>
+            <h3 id="modalTitle" class="font-bold text-sm">Add New Entry</h3>
+            <p class="text-[11px] text-slate-400">Values calculate automatically in real time</p>
           </div>
         </div>
-        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+        <button onclick="closeEntryModal()" class="text-slate-400 hover:text-white transition-colors cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form id="entryForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
-        <input type="hidden" id="entryId" value="">
+      <!-- Modal Form -->
+      <form id="ledgerForm" onsubmit="handleFormSubmit(event)" class="p-5 space-y-4">
+        <input type="hidden" id="entryRecordId">
 
-        <!-- Date & Notes -->
+        <!-- Date & Remarks -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Date</label>
-            <input type="date" id="inputDate" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-mono">
+            <input type="date" id="inputDate" required class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Note (Optional)</label>
-            <input type="text" id="inputNote" placeholder="e.g. Day summary, batch" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Remarks / Note (Optional)</label>
+            <input type="text" id="inputNote" placeholder="e.g. Daily closing" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
         </div>
 
-        <div class="border-t border-slate-100 pt-3">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <!-- Sale -->
-            <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1">Sale</label>
-              <div class="relative">
-                <span class="curr-sign absolute left-3 top-2 text-slate-400 text-xs font-mono">₹</span>
-                <input type="number" step="any" min="0" id="inputSale" oninput="calculateModalDerivations()" required placeholder="80000" class="pl-8 pr-3 py-2 w-full text-xs font-mono bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
-              </div>
-            </div>
-
-            <!-- Profit -->
-            <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1">Profit</label>
-              <div class="relative">
-                <span class="curr-sign absolute left-3 top-2 text-slate-400 text-xs font-mono">₹</span>
-                <input type="number" step="any" min="0" id="inputProfit" oninput="calculateModalDerivations()" required placeholder="6000" class="pl-8 pr-3 py-2 w-full text-xs font-mono bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
-              </div>
-            </div>
-
-            <!-- Today's Purchase -->
-            <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1">Today's Purchase</label>
-              <div class="relative">
-                <span class="curr-sign absolute left-3 top-2 text-slate-400 text-xs font-mono">₹</span>
-                <input type="number" step="any" min="0" id="inputPurchase" oninput="calculateModalDerivations()" required placeholder="24000" class="pl-8 pr-3 py-2 w-full text-xs font-mono bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
-              </div>
-            </div>
-
-            <!-- Expense -->
-            <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1">Expense</label>
-              <div class="relative">
-                <span class="curr-sign absolute left-3 top-2 text-slate-400 text-xs font-mono">₹</span>
-                <input type="number" step="any" min="0" id="inputExpense" oninput="calculateModalDerivations()" required placeholder="3000" class="pl-8 pr-3 py-2 w-full text-xs font-mono bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
-              </div>
-            </div>
-
-            <!-- Savings -->
-            <div class="sm:col-span-2">
-              <label class="block text-xs font-medium text-slate-700 mb-1">Savings</label>
-              <div class="relative">
-                <span class="curr-sign absolute left-3 top-2 text-slate-400 text-xs font-mono">₹</span>
-                <input type="number" step="any" min="0" id="inputSavings" oninput="calculateModalDerivations()" required placeholder="750" class="pl-8 pr-3 py-2 w-full text-xs font-mono bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
-              </div>
-            </div>
+        <!-- 5 Direct Input Fields -->
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Sale</label>
+            <input type="number" step="any" min="0" id="inputSale" required oninput="calculateModalDerived()" placeholder="0.00" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Profit</label>
+            <input type="number" step="any" min="0" id="inputProfit" required oninput="calculateModalDerived()" placeholder="0.00" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Today's Purchase</label>
+            <input type="number" step="any" min="0" id="inputPurchase" required oninput="calculateModalDerived()" placeholder="0.00" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Expense</label>
+            <input type="number" step="any" min="0" id="inputExpense" required oninput="calculateModalDerived()" placeholder="0.00" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
         </div>
 
-        <!-- Calculated Preview Cards (Cleaned of formulas) -->
-        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-2">
-          <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Calculated Values</div>
-          <div class="grid grid-cols-3 gap-2 text-xs">
-            <div class="bg-white p-2 rounded-lg border border-slate-100">
-              <div class="text-[10px] text-slate-400">Stock-Out</div>
-              <div id="previewStockOut" class="font-bold text-slate-800 mono-num mt-0.5">0</div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Savings</label>
+          <input type="number" step="any" min="0" id="inputSavings" required oninput="calculateModalDerived()" placeholder="0.00" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+        </div>
+
+        <!-- Calculated Live Preview Cards Inside Modal -->
+        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Automatic Calculations</span>
+          
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="bg-white p-2 rounded-lg border border-slate-200">
+              <span class="text-[10px] font-medium text-slate-500 block">Stock-Out</span>
+              <span id="previewStockOut" class="text-xs font-bold text-slate-800 mono-num">0.00</span>
             </div>
-            <div class="bg-white p-2 rounded-lg border border-slate-100">
-              <div class="text-[10px] text-slate-400">Net Profit</div>
-              <div id="previewNetProfit" class="font-bold text-emerald-700 mono-num mt-0.5">0</div>
+            <!-- Net Profit preview with dynamic green/red -->
+            <div id="previewNetProfitBox" class="bg-emerald-50/60 p-2 rounded-lg border border-emerald-200">
+              <span id="previewNetProfitLabel" class="text-[10px] font-bold text-emerald-700 block">Net Profit</span>
+              <span id="previewNetProfit" class="text-xs font-bold text-emerald-700 mono-num">0.00</span>
             </div>
-            <div class="bg-white p-2 rounded-lg border border-slate-100">
-              <div class="text-[10px] text-slate-400">Balance for Purchase</div>
-              <div id="previewPurchaseBal" class="font-bold text-amber-700 mono-num mt-0.5">0</div>
+            <div class="bg-blue-50/60 p-2 rounded-lg border border-blue-200">
+              <span class="text-[10px] font-bold text-blue-800 block">Balance for Purchase</span>
+              <span id="previewBalancePurchase" class="text-xs font-bold text-blue-800 mono-num">0.00</span>
             </div>
           </div>
         </div>
 
-        <!-- Modal Actions -->
-        <div class="flex items-center justify-end gap-2 pt-2">
-          <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors">
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-end gap-2.5 pt-2">
+          <button type="button" onclick="closeEntryModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer">
             Cancel
           </button>
-          <button type="submit" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md shadow-indigo-100 transition-all">
-            Save Entry
+          <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-600/20 transition-all cursor-pointer">
+            Save Record
           </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Notification Toast -->
-  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-    <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-xs border border-slate-800">
-      <div id="toastIcon" class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-        <i data-lucide="check" class="w-3.5 h-3.5"></i>
-      </div>
-      <span id="toastMsg" class="font-medium">Action completed successfully</span>
-    </div>
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-2.5 px-4 py-2.5 bg-slate-900 text-white text-xs font-semibold rounded-xl shadow-xl border border-slate-800">
+    <i id="toastIcon" data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastMsg">Changes saved</span>
   </div>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t border-slate-200 mt-auto py-4">
-    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 font-medium">
-      ATK SUPERMARKET • Cashflow & Ledger Tracker
-    </div>
-  </footer>
-
   <script>
-    const STORAGE_KEY = 'atk_supermarket_cashflow_records_v1';
-    const CURRENCY_KEY = 'atk_supermarket_currency_v1';
-    const LOGO_KEY = 'atk_supermarket_custom_logo_v1';
+    // Storage Keys
+    const STORAGE_KEY = 'atk_supermarket_records';
+    const CURRENCY_KEY = 'atk_currency_pref';
+    const LOGO_KEY = 'atk_custom_logo';
+    const LAST_SAVED_KEY = 'atk_last_saved_time';
 
-    let currency = localStorage.getItem(CURRENCY_KEY) || '₹';
+    // State
+    let currentCurrency = localStorage.getItem(CURRENCY_KEY) || '₹';
+    let searchQuery = '';
     let records = [];
 
-    // Exact reference dataset from your spreadsheet
-    const defaultSampleData = [
-      {
-        id: 'rec_101',
-        date: '2026-10-01',
-        sale: 80000,
-        profit: 6000,
-        stockOut: 74000,
-        purchase: 24000,
-        expense: 3000,
-        savings: 750,
-        netProfit: 2250,
-        balancePurchase: 50000,
-        note: 'Baseline Record'
-      }
-    ];
-
+    // Initialize application on load
     window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('currencySymbol').value = currency;
-      updateCurrencyVisuals();
-      loadSavedLogo();
-
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          records = JSON.parse(saved);
-        } catch (e) {
-          records = [...defaultSampleData];
-        }
-      } else {
-        records = [...defaultSampleData];
-        saveRecordsToStorage();
-      }
-
+      loadLogo();
+      loadCurrency();
+      loadRecords();
+      updateLastSavedDisplay();
       lucide.createIcons();
-      renderLedger();
-      updateDashboard();
     });
 
-    function loadSavedLogo() {
-      const savedLogo = localStorage.getItem(LOGO_KEY);
-      const defaultSvg = document.getElementById('defaultAtkSvg');
-      const customImg = document.getElementById('customAtkImg');
-      const resetBtn = document.getElementById('resetLogoBtn');
+    // Money formatting helper
+    function formatMoney(num) {
+      if (isNaN(num)) return `${currentCurrency} 0.00`;
+      return `${currentCurrency} ` + Number(num).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
 
-      if (savedLogo) {
-        customImg.src = savedLogo;
-        customImg.classList.remove('hidden');
-        defaultSvg.classList.add('hidden');
-        resetBtn.classList.remove('hidden');
-      } else {
-        customImg.classList.add('hidden');
-        defaultSvg.classList.remove('hidden');
-        resetBtn.classList.add('hidden');
+    // Logo Handlers
+    function loadLogo() {
+      const savedLogo = localStorage.getItem(LOGO_KEY);
+      const imgEl = document.getElementById('customLogoImg');
+      const svgEl = document.getElementById('vectorLogoSvg');
+      if (savedLogo && imgEl && svgEl) {
+        imgEl.src = savedLogo;
+        imgEl.classList.remove('hidden');
+        svgEl.classList.add('hidden');
       }
     }
 
-    function handleLogoUpload(e) {
-      const file = e.target.files[0];
+    function handleLogoUpload(event) {
+      const file = event.target.files[0];
       if (!file) return;
-
-      if (!file.type.startsWith('image/')) {
-        showToast('Please select a valid image file', true);
-        return;
-      }
-
       const reader = new FileReader();
-      reader.onload = function(evt) {
-        const base64Data = evt.target.result;
+      reader.onload = function(e) {
+        const base64 = e.target.result;
         try {
-          localStorage.setItem(LOGO_KEY, base64Data);
-          loadSavedLogo();
-          showToast('Logo updated');
+          localStorage.setItem(LOGO_KEY, base64);
+          loadLogo();
+          showToast("Logo updated successfully", "check-circle", "text-emerald-400");
         } catch (err) {
-          showToast('Image is too large. Try a smaller file.', true);
+          showToast("Image is too large to store locally", "alert-circle", "text-rose-400");
         }
       };
       reader.readAsDataURL(file);
     }
 
-    function resetLogoToDefault() {
-      localStorage.removeItem(LOGO_KEY);
-      loadSavedLogo();
-      showToast('Reset to default vector logo');
+    // Currency Handlers
+    function loadCurrency() {
+      const selector = document.getElementById('currencySelector');
+      if (selector) selector.value = currentCurrency;
     }
 
-    function formatMoney(num) {
-      if (isNaN(num) || num === null || num === undefined) return currency + '0';
-      return currency + Number(num).toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-      });
-    }
-
-    function changeCurrency(newCurr) {
-      currency = newCurr;
-      localStorage.setItem(CURRENCY_KEY, newCurr);
-      updateCurrencyVisuals();
+    function changeCurrency(val) {
+      currentCurrency = val;
+      localStorage.setItem(CURRENCY_KEY, val);
       renderLedger();
-      updateDashboard();
+      updateOverviewKPIs();
+      calculateModalDerived();
+      showToast(`Currency set to ${val}`, "check-circle", "text-indigo-400");
     }
 
-    function updateCurrencyVisuals() {
-      document.querySelectorAll('.curr-sign').forEach(el => {
-        el.textContent = currency;
-      });
-    }
-
-    function saveRecordsToStorage() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-    }
-
-    function showToast(message, isError = false) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toastMsg');
-      const toastIcon = document.getElementById('toastIcon');
-
-      toastMsg.textContent = message;
-      if (isError) {
-        toastIcon.className = "w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center";
-        toastIcon.innerHTML = `<i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>`;
+    // Load records (Starts completely empty if nothing is saved)
+    function loadRecords() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          records = JSON.parse(stored);
+        } catch(e) {
+          records = [];
+        }
       } else {
-        toastIcon.className = "w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center";
-        toastIcon.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i>`;
+        records = [];
       }
-      lucide.createIcons();
-
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 2400);
+      renderLedger();
+      updateOverviewKPIs();
     }
 
-    function openModal(editId = null) {
-      const form = document.getElementById('entryForm');
+    function saveRecords() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      localStorage.setItem(LAST_SAVED_KEY, now);
+      updateLastSavedDisplay();
+    }
+
+    function updateLastSavedDisplay() {
+      const savedTime = localStorage.getItem(LAST_SAVED_KEY);
+      const indicator = document.getElementById('lastSavedIndicator');
+      if (savedTime && indicator) {
+        indicator.textContent = `Auto-saved at ${savedTime}`;
+      }
+    }
+
+    // Dedicated Save Button Action
+    function explicitSaveLedger() {
+      saveRecords();
+      showToast("Ledger saved! All data is secure on this device.", "check-circle", "text-emerald-400");
+    }
+
+    // Render Ledger Table
+    function renderLedger() {
+      const tbody = document.getElementById('ledgerTableBody');
+      const tfoot = document.getElementById('ledgerTableFooter');
+      const emptyState = document.getElementById('emptyState');
+      const countBadge = document.getElementById('recordCountBadge');
+
+      const filtered = records.filter(r => {
+        if (!searchQuery) return true;
+        const q = searchQuery.toLowerCase();
+        return (r.date && r.date.toLowerCase().includes(q)) || (r.note && r.note.toLowerCase().includes(q));
+      });
+
+      countBadge.textContent = `${filtered.length} Record${filtered.length === 1 ? '' : 's'}`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        tfoot.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      let html = '';
+      filtered.forEach(r => {
+        const netProfitVal = Number(r.netProfit) || 0;
+        const isNegativeNet = netProfitVal < 0;
+        const netProfitClass = isNegativeNet
+          ? 'text-rose-600 bg-rose-50/50'
+          : 'text-emerald-700 bg-emerald-50/40';
+
+        html += `
+          <tr class="hover:bg-slate-50/90 transition-colors group">
+            <td class="py-3 px-3.5 whitespace-nowrap">
+              <div class="font-bold text-slate-800">${r.date}</div>
+              ${r.note ? `<div class="text-[10px] text-slate-400 truncate max-w-[130px]">${escapeHtml(r.note)}</div>` : ''}
+            </td>
+            <td class="py-3 px-3.5 text-right font-medium text-slate-800 mono-num">${formatMoney(r.sale)}</td>
+            <td class="py-3 px-3.5 text-right font-semibold text-emerald-600 mono-num">${formatMoney(r.profit)}</td>
+            <td class="py-3 px-3.5 text-right font-medium text-slate-800 mono-num">${formatMoney(r.stockOut)}</td>
+            <td class="py-3 px-3.5 text-right font-medium text-cyan-700 mono-num">${formatMoney(r.purchase)}</td>
+            <td class="py-3 px-3.5 text-right font-medium text-rose-600 mono-num">${formatMoney(r.expense)}</td>
+            
+            <!-- Highlighted Column: Savings (Violet) -->
+            <td class="py-3 px-3.5 text-right font-bold text-purple-700 bg-purple-50/50 mono-num">${formatMoney(r.savings)}</td>
+            
+            <!-- Highlighted Column: Net Profit (Dynamic Green / Red) -->
+            <td class="py-3 px-3.5 text-right font-bold mono-num ${netProfitClass}">${formatMoney(r.netProfit)}</td>
+            
+            <!-- Highlighted Column: Balance Amount for Purchase -->
+            <td class="py-3 px-3.5 text-right font-bold text-blue-900 bg-blue-50/40 mono-num">${formatMoney(r.balancePurchase)}</td>
+            
+            <td class="py-3 px-3.5 text-center whitespace-nowrap">
+              <div class="flex items-center justify-center gap-1 opacity-80 group-hover:opacity-100">
+                <button onclick="editRecord('${r.id}')" class="p-1 rounded-md text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer" title="Edit">
+                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="deleteRecord('${r.id}')" class="p-1 rounded-md text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer" title="Delete">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+
+      // Calculate totals for footer
+      let sumSale = 0, sumProfit = 0, sumStockOut = 0, sumPurchase = 0, sumExpense = 0, sumSavings = 0, sumNetProfit = 0, sumBalancePurchase = 0;
+      filtered.forEach(r => {
+        sumSale += Number(r.sale) || 0;
+        sumProfit += Number(r.profit) || 0;
+        sumStockOut += Number(r.stockOut) || 0;
+        sumPurchase += Number(r.purchase) || 0;
+        sumExpense += Number(r.expense) || 0;
+        sumSavings += Number(r.savings) || 0;
+        sumNetProfit += Number(r.netProfit) || 0;
+        sumBalancePurchase += Number(r.balancePurchase) || 0;
+      });
+
+      const totalNetIsNegative = sumNetProfit < 0;
+      const footerNetClass = totalNetIsNegative
+        ? 'text-rose-700 bg-rose-100/70'
+        : 'text-emerald-800 bg-emerald-100/60';
+
+      tfoot.innerHTML = `
+        <tr>
+          <td class="py-3 px-3.5 text-slate-800 font-bold uppercase tracking-wider text-[11px]">Total (${filtered.length})</td>
+          <td class="py-3 px-3.5 text-right mono-num font-bold text-slate-900">${formatMoney(sumSale)}</td>
+          <td class="py-3 px-3.5 text-right mono-num font-bold text-emerald-600">${formatMoney(sumProfit)}</td>
+          <td class="py-3 px-3.5 text-right mono-num font-bold text-slate-900">${formatMoney(sumStockOut)}</td>
+          <td class="py-3 px-3.5 text-right mono-num font-bold text-cyan-700">${formatMoney(sumPurchase)}</td>
+          <td class="py-3 px-3.5 text-right mono-num font-bold text-rose-600">${formatMoney(sumExpense)}</td>
+          <td class="py-3 px-3.5 text-right mono-num font-black text-purple-800 bg-purple-100/70">${formatMoney(sumSavings)}</td>
+          <td class="py-3 px-3.5 text-right mono-num font-black ${footerNetClass}">${formatMoney(sumNetProfit)}</td>
+          <td class="py-3 px-3.5 text-right mono-num font-black text-blue-900 bg-blue-100/60">${formatMoney(sumBalancePurchase)}</td>
+          <td></td>
+        </tr>
+      `;
+
+      lucide.createIcons();
+    }
+
+    // Update Overview KPI Cards & Dynamic Red/Green on the BIG NET PROFIT BOX
+    function updateOverviewKPIs() {
+      let tSale = 0, tProfit = 0, tStockOut = 0, tPurchase = 0, tExpense = 0, tSavings = 0, tNetProfit = 0, tBalancePurchase = 0;
+
+      records.forEach(r => {
+        tSale += Number(r.sale) || 0;
+        tProfit += Number(r.profit) || 0;
+        tStockOut += Number(r.stockOut) || 0;
+        tPurchase += Number(r.purchase) || 0;
+        tExpense += Number(r.expense) || 0;
+        tSavings += Number(r.savings) || 0;
+        tNetProfit += Number(r.netProfit) || 0;
+        tBalancePurchase += Number(r.balancePurchase) || 0;
+      });
+
+      // Compact standard row
+      document.getElementById('kpiTotalSale').textContent = formatMoney(tSale);
+      document.getElementById('kpiTotalProfit').textContent = formatMoney(tProfit);
+      document.getElementById('kpiTotalStockOut').textContent = formatMoney(tStockOut);
+      document.getElementById('kpiTotalPurchase').textContent = formatMoney(tPurchase);
+      document.getElementById('kpiTotalExpense').textContent = formatMoney(tExpense);
+
+      // Highlighted big box: Savings (Violet)
+      document.getElementById('kpiTotalSavings').textContent = formatMoney(tSavings);
+      
+      // Highlighted big box: Balance for Purchase
+      document.getElementById('kpiTotalBalancePurchase').textContent = formatMoney(tBalancePurchase);
+
+      // HIGHLIGHTED BIG BOX: NET PROFIT - DYNAMICALLY TURNS RED IF TOTAL < 0, GREEN IF >= 0
+      const netProfitEl = document.getElementById('kpiTotalNetProfit');
+      const netProfitCard = document.getElementById('netProfitCard');
+      const netProfitLabel = document.getElementById('netProfitCardLabel');
+      const netProfitSub = document.getElementById('netProfitCardSub');
+      const netProfitIconWrap = document.getElementById('netProfitCardIconWrapper');
+
+      netProfitEl.textContent = formatMoney(tNetProfit);
+
+      if (tNetProfit < 0) {
+        netProfitCard.className = "bg-gradient-to-br from-rose-500/15 via-white to-rose-50 rounded-2xl p-5 border-2 border-rose-500 shadow-md shadow-rose-500/15 relative overflow-hidden transition-all hover:border-rose-600 hover:shadow-lg";
+        netProfitLabel.className = "text-xs font-black text-rose-900 uppercase tracking-wider block";
+        netProfitSub.textContent = "Deficit / Loss";
+        netProfitSub.className = "text-[11px] text-rose-600 font-bold";
+        netProfitIconWrap.className = "w-11 h-11 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-md shadow-rose-600/30 transition-colors";
+        netProfitEl.className = "text-2xl sm:text-3xl font-extrabold text-rose-700 mono-num tracking-tight mt-1";
+      } else {
+        netProfitCard.className = "bg-gradient-to-br from-emerald-500/10 via-white to-emerald-50 rounded-2xl p-5 border-2 border-emerald-400 shadow-md shadow-emerald-500/10 relative overflow-hidden transition-all hover:border-emerald-500 hover:shadow-lg";
+        netProfitLabel.className = "text-xs font-black text-emerald-900 uppercase tracking-wider block";
+        netProfitSub.textContent = "Savings Excluded";
+        netProfitSub.className = "text-[11px] text-emerald-600 font-medium";
+        netProfitIconWrap.className = "w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/30 transition-colors";
+        netProfitEl.className = "text-2xl sm:text-3xl font-extrabold text-emerald-700 mono-num tracking-tight mt-1";
+      }
+    }
+
+    // Search filter
+    function applySearchFilter() {
+      searchQuery = document.getElementById('searchInput').value.trim();
+      renderLedger();
+    }
+
+    // Modal Operations
+    function openEntryModal(editId = null) {
       const modal = document.getElementById('entryModal');
       const title = document.getElementById('modalTitle');
-
+      const idInput = document.getElementById('entryRecordId');
+      
+      document.getElementById('ledgerForm').reset();
+      
       if (editId) {
         const item = records.find(r => r.id === editId);
-        if (!item) return;
-        title.textContent = "Edit Daily Entry";
-        document.getElementById('entryId').value = item.id;
-        document.getElementById('inputDate').value = item.date;
-        document.getElementById('inputNote').value = item.note || '';
-        document.getElementById('inputSale').value = item.sale;
-        document.getElementById('inputProfit').value = item.profit;
-        document.getElementById('inputPurchase').value = item.purchase;
-        document.getElementById('inputExpense').value = item.expense;
-        document.getElementById('inputSavings').value = item.savings;
+        if (item) {
+          title.textContent = 'Edit Ledger Entry';
+          idInput.value = item.id;
+          document.getElementById('inputDate').value = item.date;
+          document.getElementById('inputNote').value = item.note || '';
+          document.getElementById('inputSale').value = item.sale;
+          document.getElementById('inputProfit').value = item.profit;
+          document.getElementById('inputPurchase').value = item.purchase;
+          document.getElementById('inputExpense').value = item.expense;
+          document.getElementById('inputSavings').value = item.savings;
+        }
       } else {
-        title.textContent = "Record Daily Entry";
-        form.reset();
-        document.getElementById('entryId').value = '';
+        title.textContent = 'Add New Entry';
+        idInput.value = '';
         document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
-        document.getElementById('inputSale').value = 80000;
-        document.getElementById('inputProfit').value = 6000;
-        document.getElementById('inputPurchase').value = 24000;
-        document.getElementById('inputExpense').value = 3000;
-        document.getElementById('inputSavings').value = 750;
       }
 
-      calculateModalDerivations();
+      calculateModalDerived();
       modal.classList.remove('hidden');
+      lucide.createIcons();
     }
 
-    function closeModal() {
+    function closeEntryModal() {
       document.getElementById('entryModal').classList.add('hidden');
     }
 
-    // Mathematical calculations executed seamlessly behind the scenes
-    function calculateModalDerivations() {
+    // Real-Time Derived Calculations Inside Modal
+    function calculateModalDerived() {
       const sale = parseFloat(document.getElementById('inputSale').value) || 0;
       const profit = parseFloat(document.getElementById('inputProfit').value) || 0;
       const purchase = parseFloat(document.getElementById('inputPurchase').value) || 0;
       const expense = parseFloat(document.getElementById('inputExpense').value) || 0;
       const savings = parseFloat(document.getElementById('inputSavings').value) || 0;
 
-      // Stock-out = Sale - Profit
+      // Stock-Out = Sale - Profit
       const stockOut = sale - profit;
       // Net Profit = Profit - Expense - Savings
       const netProfit = profit - expense - savings;
-      // Balance Amount for Purchase = Sale - Profit - Today's Purchase
+      // Balance Amount for Purchase = Stock-Out - Today's Purchase
       const balancePurchase = stockOut - purchase;
 
       document.getElementById('previewStockOut').textContent = formatMoney(stockOut);
-      document.getElementById('previewNetProfit').textContent = formatMoney(netProfit);
-      document.getElementById('previewPurchaseBal').textContent = formatMoney(balancePurchase);
+      document.getElementById('previewBalancePurchase').textContent = formatMoney(balancePurchase);
+
+      const previewNetEl = document.getElementById('previewNetProfit');
+      const previewNetBox = document.getElementById('previewNetProfitBox');
+      const previewNetLabel = document.getElementById('previewNetProfitLabel');
+
+      previewNetEl.textContent = formatMoney(netProfit);
+      if (netProfit < 0) {
+        previewNetBox.className = "bg-rose-50/80 p-2 rounded-lg border border-rose-300";
+        previewNetLabel.className = "text-[10px] font-bold text-rose-700 block";
+        previewNetEl.className = "text-xs font-bold text-rose-700 mono-num";
+      } else {
+        previewNetBox.className = "bg-emerald-50/60 p-2 rounded-lg border border-emerald-200";
+        previewNetLabel.className = "text-[10px] font-bold text-emerald-700 block";
+        previewNetEl.className = "text-xs font-bold text-emerald-700 mono-num";
+      }
     }
 
+    // Save record (Create or Update)
     function handleFormSubmit(e) {
       e.preventDefault();
-      const id = document.getElementById('entryId').value;
+
+      const editId = document.getElementById('entryRecordId').value;
       const date = document.getElementById('inputDate').value;
       const note = document.getElementById('inputNote').value.trim();
       const sale = parseFloat(document.getElementById('inputSale').value) || 0;
@@ -561,177 +769,50 @@
       const netProfit = profit - expense - savings;
       const balancePurchase = stockOut - purchase;
 
-      const newRecord = {
-        id: id || ('rec_' + Date.now()),
-        date,
-        note,
-        sale,
-        profit,
-        stockOut,
-        purchase,
-        expense,
-        savings,
-        netProfit,
-        balancePurchase
-      };
-
-      if (id) {
-        const index = records.findIndex(r => r.id === id);
-        if (index !== -1) {
-          records[index] = newRecord;
-          showToast("Entry updated successfully");
+      if (editId) {
+        const idx = records.findIndex(r => r.id === editId);
+        if (idx !== -1) {
+          records[idx] = {
+            ...records[idx],
+            date, note, sale, profit, stockOut, purchase, expense, savings, netProfit, balancePurchase
+          };
+          showToast("Entry updated successfully", "check-circle", "text-emerald-400");
         }
       } else {
+        const newRecord = {
+          id: 'rec_' + Date.now(),
+          date, note, sale, profit, stockOut, purchase, expense, savings, netProfit, balancePurchase
+        };
         records.unshift(newRecord);
-        showToast("New entry recorded");
+        showToast("New entry recorded and saved", "check-circle", "text-emerald-400");
       }
 
-      records.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      saveRecordsToStorage();
-      closeModal();
+      saveRecords();
       renderLedger();
-      updateDashboard();
+      updateOverviewKPIs();
+      closeEntryModal();
+    }
+
+    function editRecord(id) {
+      openEntryModal(id);
     }
 
     function deleteRecord(id) {
       records = records.filter(r => r.id !== id);
-      saveRecordsToStorage();
-      showToast("Record removed");
+      saveRecords();
       renderLedger();
-      updateDashboard();
+      updateOverviewKPIs();
+      showToast("Record removed and ledger updated", "trash-2", "text-rose-400");
     }
 
-    function clearAllData() {
-      if (records.length === 0) return;
-      records = [];
-      saveRecordsToStorage();
-      showToast("All records cleared");
-      renderLedger();
-      updateDashboard();
-    }
-
-    function loadSampleDataset() {
-      records = JSON.parse(JSON.stringify(defaultSampleData));
-      saveRecordsToStorage();
-      showToast("Reset to sample entry");
-      renderLedger();
-      updateDashboard();
-    }
-
-    function renderLedger() {
-      const tbody = document.getElementById('ledgerTableBody');
-      const tfoot = document.getElementById('ledgerTableFoot');
-      const emptyState = document.getElementById('emptyState');
-      const search = (document.getElementById('searchInput').value || '').toLowerCase();
-
-      const filtered = records.filter(r => {
-        return r.date.toLowerCase().includes(search) || (r.note && r.note.toLowerCase().includes(search));
-      });
-
-      document.getElementById('recordCountBadge').textContent = `${filtered.length} of ${records.length} Records`;
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = '';
-        tfoot.innerHTML = '';
-        emptyState.classList.remove('hidden');
-        return;
-      }
-
-      emptyState.classList.add('hidden');
-
-      let sumSale = 0, sumProfit = 0, sumStockOut = 0, sumPurchase = 0, sumExpense = 0, sumSavings = 0, sumNetProfit = 0, sumBalancePurchase = 0;
-
-      let html = '';
-      filtered.forEach(r => {
-        sumSale += r.sale;
-        sumProfit += r.profit;
-        sumStockOut += r.stockOut;
-        sumPurchase += r.purchase;
-        sumExpense += r.expense;
-        sumSavings += r.savings;
-        sumNetProfit += r.netProfit;
-        sumBalancePurchase += r.balancePurchase;
-
-        html += `
-          <tr class="hover:bg-slate-50/80 transition-colors">
-            <td class="py-3 px-4 font-mono font-medium text-slate-800 whitespace-nowrap">
-              <div>${r.date}</div>
-              ${r.note ? `<div class="text-[10px] text-slate-400 font-sans truncate max-w-[130px]">${r.note}</div>` : ''}
-            </td>
-            <td class="py-3 px-4 text-right mono-num font-medium text-slate-800">${formatMoney(r.sale)}</td>
-            <td class="py-3 px-4 text-right mono-num font-medium text-emerald-600">${formatMoney(r.profit)}</td>
-            <td class="py-3 px-4 text-right mono-num font-semibold text-slate-900 bg-slate-50/60">${formatMoney(r.stockOut)}</td>
-            <td class="py-3 px-4 text-right mono-num text-amber-700 font-medium">${formatMoney(r.purchase)}</td>
-            <td class="py-3 px-4 text-right mono-num text-rose-600 font-medium">${formatMoney(r.expense)}</td>
-            <td class="py-3 px-4 text-right mono-num text-purple-600 font-medium">${formatMoney(r.savings)}</td>
-            <td class="py-3 px-4 text-right mono-num font-bold text-emerald-700 bg-emerald-50/40">${formatMoney(r.netProfit)}</td>
-            <td class="py-3 px-4 text-right mono-num font-bold text-amber-700 bg-amber-50/40">${formatMoney(r.balancePurchase)}</td>
-            <td class="py-3 px-4 text-center whitespace-nowrap">
-              <div class="inline-flex items-center gap-1.5">
-                <button onclick="openModal('${r.id}')" title="Edit" class="p-1 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
-                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
-                </button>
-                <button onclick="deleteRecord('${r.id}')" title="Delete" class="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
-      });
-
-      tbody.innerHTML = html;
-
-      tfoot.innerHTML = `
-        <tr>
-          <td class="py-3.5 px-4 font-bold text-slate-900">Total</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-slate-900">${formatMoney(sumSale)}</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-emerald-700">${formatMoney(sumProfit)}</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-slate-900 bg-slate-100">${formatMoney(sumStockOut)}</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-amber-700">${formatMoney(sumPurchase)}</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-rose-700">${formatMoney(sumExpense)}</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-purple-700">${formatMoney(sumSavings)}</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-emerald-700 bg-emerald-100/50">${formatMoney(sumNetProfit)}</td>
-          <td class="py-3.5 px-4 text-right mono-num font-bold text-amber-700 bg-amber-100/50">${formatMoney(sumBalancePurchase)}</td>
-          <td class="py-3.5 px-4 text-center"></td>
-        </tr>
-      `;
-
-      lucide.createIcons();
-    }
-
-    function applyFilters() {
-      renderLedger();
-    }
-
-    function updateDashboard() {
-      let totalSale = 0, totalProfit = 0, totalPurchase = 0, totalExpense = 0, totalSavings = 0, totalNetProfit = 0;
-
-      records.forEach(r => {
-        totalSale += r.sale;
-        totalProfit += r.profit;
-        totalPurchase += r.purchase;
-        totalExpense += r.expense;
-        totalSavings += r.savings;
-        totalNetProfit += r.netProfit;
-      });
-
-      document.getElementById('kpiTotalSale').textContent = formatMoney(totalSale);
-      document.getElementById('kpiTotalProfit').textContent = formatMoney(totalProfit);
-      document.getElementById('kpiTotalPurchase').textContent = formatMoney(totalPurchase);
-      document.getElementById('kpiTotalExpense').textContent = formatMoney(totalExpense);
-      document.getElementById('kpiTotalSavings').textContent = formatMoney(totalSavings);
-      document.getElementById('kpiTotalNetProfit').textContent = formatMoney(totalNetProfit);
-    }
-
+    // CSV Export
     function exportToCSV() {
-      if (records.length === 0) {
-        showToast("No data to export", true);
+      if (!records.length) {
+        showToast("No data to export", "alert-circle", "text-amber-400");
         return;
       }
 
-      const headers = ["Date", "Sale", "Profit", "Stock-Out", "Today's Purchase", "Expense", "Savings", "Net Profit", "Balance Amount for Purchase", "Note"];
+      const headers = ["Date", "Sale", "Profit", "Stock-Out", "Today's Purchase", "Expense", "Savings", "Net Profit", "Balance Amount for Purchase", "Remarks"];
       const rows = records.map(r => [
         `"${r.date}"`,
         r.sale,
@@ -753,7 +834,39 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast("CSV exported successfully");
+      showToast("CSV file downloaded", "download", "text-blue-400");
+    }
+
+    // Toast Utility
+    let toastTimeout;
+    function showToast(msg, icon = "check-circle", colorClass = "text-emerald-400") {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+      
+      toastMsg.textContent = msg;
+      toastIcon.setAttribute('data-lucide', icon);
+      toastIcon.className = `w-4 h-4 ${colorClass}`;
+      
+      lucide.createIcons();
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2400);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>"']/g, function(m) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        })[m];
+      });
     }
   </script>
 </body>
