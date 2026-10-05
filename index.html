@@ -97,21 +97,8 @@
         </div>
       </div>
 
-      <!-- Action Toolbar -->
+      <!-- Action Toolbar (Currency selector removed, INR locked) -->
       <div class="flex items-center flex-wrap gap-2.5">
-        <!-- Currency Selector -->
-        <div class="flex items-center bg-slate-100 border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-2xs">
-          <span class="text-xs font-semibold text-slate-500 mr-2">Currency:</span>
-          <select id="currencySelector" onchange="changeCurrency(this.value)" class="bg-transparent text-xs font-bold text-slate-800 focus:outline-hidden cursor-pointer">
-            <option value="₹" selected>INR (₹)</option>
-            <option value="$">USD ($)</option>
-            <option value="€">EUR (€)</option>
-            <option value="£">GBP (£)</option>
-            <option value="SAR">SAR (﷼)</option>
-            <option value="AED">AED (د.إ)</option>
-          </select>
-        </div>
-
         <!-- Explicit Sync / Save Button -->
         <button onclick="triggerManualSync()" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer" title="Ensure all data is pushed to Firebase Firestore">
           <i class="fa-solid fa-cloud-arrow-up text-xs"></i>
@@ -133,6 +120,7 @@
 
     </div>
   </header>
+
   <!-- Main Content Container -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full grow space-y-6">
 
@@ -161,7 +149,7 @@
               <i class="fa-solid fa-receipt text-xs"></i>
             </div>
           </div>
-          <div id="kpiTotalSale" class="text-base sm:text-lg font-bold text-slate-900 mono-num">0.00</div>
+          <div id="kpiTotalSale" class="text-base sm:text-lg font-bold text-slate-900 mono-num">₹ 0.00</div>
         </div>
 
         <!-- 2. Profit -->
@@ -172,7 +160,7 @@
               <i class="fa-solid fa-arrow-trend-up text-xs"></i>
             </div>
           </div>
-          <div id="kpiTotalProfit" class="text-base sm:text-lg font-bold text-emerald-600 mono-num">0.00</div>
+          <div id="kpiTotalProfit" class="text-base sm:text-lg font-bold text-emerald-600 mono-num">₹ 0.00</div>
         </div>
 
         <!-- 3. Stock-Out -->
@@ -183,7 +171,7 @@
               <i class="fa-solid fa-boxes-stacked text-xs"></i>
             </div>
           </div>
-          <div id="kpiTotalStockOut" class="text-base sm:text-lg font-bold text-slate-800 mono-num">0.00</div>
+          <div id="kpiTotalStockOut" class="text-base sm:text-lg font-bold text-slate-800 mono-num">₹ 0.00</div>
         </div>
 
         <!-- 4. Today's Purchase -->
@@ -194,7 +182,7 @@
               <i class="fa-solid fa-cart-shopping text-xs"></i>
             </div>
           </div>
-          <div id="kpiTotalPurchase" class="text-base sm:text-lg font-bold text-cyan-700 mono-num">0.00</div>
+          <div id="kpiTotalPurchase" class="text-base sm:text-lg font-bold text-cyan-700 mono-num">₹ 0.00</div>
         </div>
 
         <!-- 5. Expense -->
@@ -205,7 +193,7 @@
               <i class="fa-solid fa-file-invoice-dollar text-xs"></i>
             </div>
           </div>
-          <div id="kpiTotalExpense" class="text-base sm:text-lg font-bold text-rose-600 mono-num">0.00</div>
+          <div id="kpiTotalExpense" class="text-base sm:text-lg font-bold text-rose-600 mono-num">₹ 0.00</div>
         </div>
       </div>
 
@@ -256,6 +244,7 @@
 
       </div>
     </section>
+
     <!-- Records Table Card -->
     <section class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
       <!-- Search & Status Bar -->
@@ -312,6 +301,7 @@
     </section>
 
   </main>
+
   <!-- MODAL: ADD / EDIT ENTRY -->
   <div id="entryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
     <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 animate-in fade-in duration-150">
@@ -380,16 +370,16 @@
           <div class="grid grid-cols-3 gap-2 text-center">
             <div class="bg-white p-2 rounded-lg border border-slate-200">
               <span class="text-[10px] font-medium text-slate-500 block">Stock-Out</span>
-              <span id="previewStockOut" class="text-xs font-bold text-slate-800 mono-num">0.00</span>
+              <span id="previewStockOut" class="text-xs font-bold text-slate-800 mono-num">₹ 0.00</span>
             </div>
             <!-- Net Profit preview with dynamic green/red -->
             <div id="previewNetProfitBox" class="bg-emerald-50/60 p-2 rounded-lg border border-emerald-200">
               <span id="previewNetProfitLabel" class="text-[10px] font-bold text-emerald-700 block">Net Profit</span>
-              <span id="previewNetProfit" class="text-xs font-bold text-emerald-700 mono-num">0.00</span>
+              <span id="previewNetProfit" class="text-xs font-bold text-emerald-700 mono-num">₹ 0.00</span>
             </div>
             <div class="bg-blue-50/60 p-2 rounded-lg border border-blue-200">
               <span class="text-[10px] font-bold text-blue-800 block">Balance for Purchase</span>
-              <span id="previewBalancePurchase" class="text-xs font-bold text-blue-800 mono-num">0.00</span>
+              <span id="previewBalancePurchase" class="text-xs font-bold text-blue-800 mono-num">₹ 0.00</span>
             </div>
           </div>
         </div>
@@ -459,6 +449,7 @@ service cloud.firestore {
     <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
     <span id="toastMsg">Changes saved</span>
   </div>
+
   <!-- Firebase Modular ES Modules -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -539,30 +530,29 @@ service cloud.firestore {
       });
     }
   </script>
+
   <script>
-    // Constants & State
+    // Constants & State (Fixed currency: INR)
     const STORAGE_KEY = 'atk_supermarket_records';
-    const CURRENCY_KEY = 'atk_currency_pref';
     const LOGO_KEY = 'atk_custom_logo';
     const LAST_SAVED_KEY = 'atk_last_saved_time';
+    const FIXED_CURRENCY = '₹';
 
     window.STORAGE_KEY = STORAGE_KEY;
     window.records = [];
-    let currentCurrency = localStorage.getItem(CURRENCY_KEY) || '₹';
     let searchQuery = '';
     let pendingDeleteId = null;
 
     // Window load initialization
     window.addEventListener('DOMContentLoaded', () => {
       loadLogo();
-      loadCurrency();
       loadLocalFallback();
     });
 
-    // Money Formatter Helper
+    // Money Formatter Helper (Permanent INR Indian numbering format)
     function formatMoney(num) {
-      if (isNaN(num)) return `${currentCurrency} 0.00`;
-      return `${currentCurrency} ` + Number(num).toLocaleString('en-IN', {
+      if (isNaN(num)) return `${FIXED_CURRENCY} 0.00`;
+      return `${FIXED_CURRENCY} ` + Number(num).toLocaleString('en-IN', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       });
@@ -634,21 +624,6 @@ service cloud.firestore {
         }
       };
       reader.readAsDataURL(file);
-    }
-
-    // Currency Switcher
-    function loadCurrency() {
-      const selector = document.getElementById('currencySelector');
-      if (selector) selector.value = currentCurrency;
-    }
-
-    function changeCurrency(val) {
-      currentCurrency = val;
-      localStorage.setItem(CURRENCY_KEY, val);
-      renderLedger();
-      updateOverviewKPIs();
-      calculateModalDerived();
-      showToast(`Currency set to ${val}`, "fa-circle-check", "text-indigo-400");
     }
 
     // Manual Sync Button Handler
@@ -1001,7 +976,7 @@ service cloud.firestore {
         return;
       }
 
-      const headers = ["Date", "Sale", "Profit", "Stock-Out", "Today's Purchase", "Expense", "Savings", "Net Profit", "Balance Amount for Purchase", "Remarks"];
+      const headers = ["Date", "Sale (INR)", "Profit (INR)", "Stock-Out (INR)", "Today's Purchase (INR)", "Expense (INR)", "Savings (INR)", "Net Profit (INR)", "Balance Amount for Purchase (INR)", "Remarks"];
       const rows = window.records.map(r => [
         `"${r.date}"`,
         r.sale,
@@ -1073,7 +1048,6 @@ service cloud.firestore {
     window.closeDeleteModal = closeDeleteModal;
     window.confirmDeleteRecord = confirmDeleteRecord;
     window.applySearchFilter = applySearchFilter;
-    window.changeCurrency = changeCurrency;
     window.triggerManualSync = triggerManualSync;
     window.exportToCSV = exportToCSV;
     window.handleLogoUpload = handleLogoUpload;
